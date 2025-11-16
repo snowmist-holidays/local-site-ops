@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowmist Holidays Operations 2025-26 | Complete Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --success: #059669;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo svg {
+            width: 36px;
+            height: 36px;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--light-bg);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+        }
+
+        tbody tr:hover {
+            background: var(--light-bg);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-group {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-private {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-custom {
+            background: #fce7f3;
+            color: #831843;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        input, select, textarea {
+            padding: 0.625rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .group-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .group-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .pax-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 700;
+        }
+
+        .booking-list {
+            margin-top: 1rem;
+        }
+
+        .booking-item {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--primary);
+            background: var(--light-bg);
+            border-radius: 4px;
+        }
+
+        .vehicle-section {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f0f9ff;
+            border-radius: 8px;
+        }
+
+        .hotel-list {
+            margin-top: 1rem;
+        }
+
+        .hotel-item {
+            background: var(--light-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .whatsapp-preview {
+            background: #e7f5e9;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            margin-top: 1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <svg viewBox="0 0 100 100" fill="none">
+                            <path d="M50 10L80 40L50 70L20 40Z" fill="#2563eb" stroke="#1e40af" stroke-width="2"/>
+                            <path d="M50 30L70 50L50 70L30 50Z" fill="#60a5fa"/>
+                            <circle cx="50" cy="50" r="8" fill="white"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1>Snowmist Holidays</h1>
+                        <p class="subtitle">Operations Management System 2025-26</p>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-success" onclick="loadDataFromJSON()">
+                        <i class="fas fa-sync"></i> Reload Data
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="container">
+            <!-- Stats Dashboard -->
+            <div class="stats-grid" id="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Bookings</div>
+                    <div class="stat-value" id="stat-bookings">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total PAX</div>
+                    <div class="stat-value" id="stat-pax">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-value" id="stat-revenue">₹0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Advance Paid</div>
+                    <div class="stat-value" id="stat-advance">₹0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Balance Due</div>
+                    <div class="stat-value" id="stat-balance">₹0</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('dashboard')">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </button>
+                <button class="tab" onclick="switchTab('groups')">
+                    <i class="fas fa-users"></i> GROUP Trips
+                </button>
+                <button class="tab" onclick="switchTab('private')">
+                    <i class="fas fa-user-friends"></i> PRIVATE Trips
+                </button>
+                <button class="tab" onclick="switchTab('custom')">
+                    <i class="fas fa-star"></i> CUSTOM Trips
+                </button>
+                <button class="tab" onclick="switchTab('all-bookings')">
+                    <i class="fas fa-list"></i> All Bookings
+                </button>
+                <button class="tab" onclick="switchTab('hotels')">
+                    <i class="fas fa-hotel"></i> Hotel Reports
+                </button>
+            </div>
+
+            <!-- Tab Contents -->
+            <div id="dashboard" class="tab-content active">
+                <h2 style="margin-bottom: 1.5rem;">Analytics & Insights</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem;">
+                    <div class="table-container">
+                        <div style="padding: 1.5rem;">
+                            <h3 style="margin-bottom: 1rem;">Booking Types</h3>
+                            <canvas id="booking-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <div style="padding: 1.5rem;">
+                            <h3 style="margin-bottom: 1rem;">Top Plans</h3>
+                            <canvas id="plan-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="groups" class="tab-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2>GROUP Trips (Consolidated by Date & Plan)</h2>
+                </div>
+                <div id="group-trips-container"></div>
+            </div>
+
+            <div id="private" class="tab-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2>PRIVATE Trips</h2>
+                </div>
+                <div id="private-trips-container"></div>
+            </div>
+
+            <div id="custom" class="tab-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2>CUSTOM Trips</h2>
+                </div>
+                <div id="custom-trips-container"></div>
+            </div>
+
+            <div id="all-bookings" class="tab-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2>All Bookings</h2>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Phone</th>
+                                <th>Type</th>
+                                <th>Plan</th>
+                                <th>Date</th>
+                                <th>PAX</th>
+                                <th>Amount</th>
+                                <th>Advance</th>
+                                <th>Balance</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-bookings-table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="hotels" class="tab-content">
+                <h2 style="margin-bottom: 1.5rem;">Hotel Management & Reports</h2>
+                <div id="hotel-reports-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Booking Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Booking</h2>
+                <button class="close-btn" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" id="edit-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Client Name</label>
+                            <input type="text" id="edit-clientName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile Number</label>
+                            <input type="text" id="edit-mobileNumber" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email ID</label>
+                            <input type="email" id="edit-mailId">
+                        </div>
+                        <div class="form-group">
+                            <label>Alternate Number</label>
+                            <input type="text" id="edit-alternateNo">
+                        </div>
+                        <div class="form-group">
+                            <label>Booking Type</label>
+                            <select id="edit-groupPvt" required>
+                                <option value="GROUP">GROUP</option>
+                                <option value="PRIVATE">PRIVATE</option>
+                                <option value="CUSTOM">CUSTOM</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Plan</label>
+                            <select id="edit-plan">
+                                <option value="A">Plan A (6D: Delhi → Shimla → Kasol → Manali)</option>
+                                <option value="A2">Plan A2 (6D: Delhi → Manali → Kasol → Shimla)</option>
+                                <option value="B">Plan B (6D: Delhi → Mcleodganj → Triund → Manali)</option>
+                                <option value="C">Plan C (7D: Delhi → Manali → Mcleodganj → Amritsar)</option>
+                                <option value="D">Plan D (8D: Delhi → Shimla → Manali → Mcleodganj → Amritsar)</option>
+                                <option value="G">Plan G (5D: Delhi → Manali → Kasol)</option>
+                                <option value="CUSTOM">CUSTOM</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Trip Date</label>
+                            <input type="date" id="edit-tripDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>MNL PAX</label>
+                            <input type="number" id="edit-mnlPax" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>KASH PAX</label>
+                            <input type="number" id="edit-kashPax" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>LEH PAX</label>
+                            <input type="number" id="edit-lehPax" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Amount</label>
+                            <input type="number" id="edit-totalAmount" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Advance Paid</label>
+                            <input type="number" id="edit-advancePaid">
+                        </div>
+                        <div class="form-group">
+                            <label>Special Requirements</label>
+                            <input type="text" id="edit-specialReq" placeholder="COUPLE ROOM, PVT SEDAN, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label>Booking By</label>
+                            <input type="text" id="edit-bookingBy">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="saveBooking()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn" style="background: var(--secondary); color: white;" onclick="closeEditModal()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GROUP Management Modal -->
+    <div id="groupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Manage GROUP Trip</h2>
+                <button class="close-btn" onclick="closeGroupModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="groupModalBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="generateGroupPDF()">
+                    <i class="fas fa-file-pdf"></i> Generate PDF
+                </button>
+                <button class="btn btn-success" onclick="showGroupWhatsApp()">
+                    <i class="fab fa-whatsapp"></i> WhatsApp Messages
+                </button>
+                <button class="btn" style="background: var(--secondary); color: white;" onclick="closeGroupModal()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Modal -->
+    <div id="whatsappModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>WhatsApp Messages</h2>
+                <button class="close-btn" onclick="closeWhatsAppModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs" style="border-bottom: none; margin-bottom: 1rem;">
+                    <button class="tab active" onclick="switchWhatsAppTab('driver')">Driver Message</button>
+                    <button class="tab" onclick="switchWhatsAppTab('hotel')">Hotel Message</button>
+                    <button class="tab" onclick="switchWhatsAppTab('finance')">Finance Message</button>
+                </div>
+                <div id="whatsapp-driver" class="tab-content active">
+                    <div class="whatsapp-preview" id="driver-message"></div>
+                    <button class="btn btn-success" style="margin-top: 1rem;" onclick="copyMessage('driver')">
+                        <i class="fas fa-copy"></i> Copy Message
+                    </button>
+                </div>
+                <div id="whatsapp-hotel" class="tab-content">
+                    <div class="whatsapp-preview" id="hotel-message"></div>
+                    <button class="btn btn-success" style="margin-top: 1rem;" onclick="copyMessage('hotel')">
+                        <i class="fas fa-copy"></i> Copy Message
+                    </button>
+                </div>
+                <div id="whatsapp-finance" class="tab-content">
+                    <div class="whatsapp-preview" id="finance-message"></div>
+                    <button class="btn btn-success" style="margin-top: 1rem;" onclick="copyMessage('finance')">
+                        <i class="fas fa-copy"></i> Copy Message
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" style="background: var(--secondary); color: white;" onclick="closeWhatsAppModal()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Data
+        let bookingsData = [];
+        let currentGroup = null;
+        let currentBooking = null;
+
+        // Plan Templates
+        const PLAN_TEMPLATES = {
+            A: { days: 6, route: "Delhi → Shimla → Kasol → Manali → Delhi", cities: ['SHIMLA', 'MANALI'] },
+            A2: { days: 6, route: "Delhi → Manali → Kasol → Shimla → Delhi", cities: ['MANALI', 'SHIMLA'] },
+            B: { days: 6, route: "Delhi → Mcleodganj → Triund → Manali → Delhi", cities: ['MCLEODGANJ', 'MANALI'] },
+            C: { days: 7, route: "Delhi → Manali → Mcleodganj → Amritsar → Delhi", cities: ['MANALI', 'MCLEODGANJ', 'AMRITSAR'] },
+            D: { days: 8, route: "Delhi → Shimla → Manali → Mcleodganj → Amritsar → Delhi", cities: ['SHIMLA', 'MANALI', 'MCLEODGANJ', 'AMRITSAR'] },
+            G: { days: 5, route: "Delhi → Manali → Kasol → Delhi", cities: ['MANALI'] }
+        };
+
+        // Vehicle Options
+        const VEHICLES = ['SEDAN', 'DZIRE', 'ERTIGA', 'CRYSTA', 'TEMPO 12', 'TEMPO 17', 'TEMPO 26', 'URBANIA', 'CUSTOM'];
+
+        // Initialize
+        window.onload = function() {
+            loadDataFromJSON();
+        };
+
+        // Load Data from JSON
+        async function loadDataFromJSON() {
+            try {
+                const response = await fetch('bookings_data.json');
+                const data = await response.json();
+                bookingsData = data.bookings || [];
+
+                // Add derived fields
+                bookingsData = bookingsData.map(b => ({
+                    ...b,
+                    totalPax: (b.mnlPax || 0) + (b.kashPax || 0) + (b.lehPax || 0),
+                    remAmount: (b.totalAmount || 0) - (b.advancePaid || 0),
+                    bookingType: determineBookingType(b),
+                    plan: determinePlan(b)
+                }));
+
+                updateDashboard();
+                renderAllViews();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                alert('Failed to load data. Make sure bookings_data.json is in the same directory.');
+            }
+        }
+
+        function determineBookingType(booking) {
+            if (booking.groupPvt && booking.groupPvt.toLowerCase().includes('group')) return 'GROUP';
+            if (booking.location && (booking.location.includes('CUST') || booking.note?.includes('CUST'))) return 'CUSTOM';
+            if (booking.groupPvt && (booking.groupPvt.toLowerCase().includes('pvt') || booking.groupPvt.toLowerCase().includes('private'))) return 'PRIVATE';
+            return 'GROUP';
+        }
+
+        function determinePlan(booking) {
+            const note = (booking.note || '').toUpperCase();
+            const location = (booking.location || '').toUpperCase();
+
+            if (note.includes('CUSTOM') || location.includes('CUST')) return 'CUSTOM';
+            if (note.includes('PLAN A2') || location.includes('A2')) return 'A2';
+            if (note.includes('PLAN A') || location.includes('- A')) return 'A';
+            if (note.includes('PLAN B') || location.includes('-B')) return 'B';
+            if (note.includes('PLAN C') || location.includes('-C') || location.includes('- C')) return 'C';
+            if (note.includes('PLAN D') || location.includes('-D') || location.includes('- D')) return 'D';
+            if (note.includes('PLAN G') || location.includes('-G')) return 'G';
+
+            return 'UNKNOWN';
+        }
+
+        // Update Dashboard
+        function updateDashboard() {
+            const totalBookings = bookingsData.length;
+            const totalPax = bookingsData.reduce((sum, b) => sum + (b.totalPax || 0), 0);
+            const totalRevenue = bookingsData.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+            const totalAdvance = bookingsData.reduce((sum, b) => sum + (b.advancePaid || 0), 0);
+            const totalBalance = bookingsData.reduce((sum, b) => sum + (b.remAmount || 0), 0);
+
+            document.getElementById('stat-bookings').textContent = totalBookings;
+            document.getElementById('stat-pax').textContent = totalPax;
+            document.getElementById('stat-revenue').textContent = '₹' + totalRevenue.toLocaleString('en-IN');
+            document.getElementById('stat-advance').textContent = '₹' + totalAdvance.toLocaleString('en-IN');
+            document.getElementById('stat-balance').textContent = '₹' + totalBalance.toLocaleString('en-IN');
+
+            // Update Charts
+            updateCharts();
+        }
+
+        function updateCharts() {
+            // Booking Types Chart
+            const bookingTypes = bookingsData.reduce((acc, b) => {
+                acc[b.bookingType] = (acc[b.bookingType] || 0) + 1;
+                return acc;
+            }, {});
+
+            const bookingCtx = document.getElementById('booking-chart');
+            if (window.bookingChart) window.bookingChart.destroy();
+            window.bookingChart = new Chart(bookingCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(bookingTypes),
+                    datasets: [{
+                        data: Object.values(bookingTypes),
+                        backgroundColor: ['#3b82f6', '#f59e0b', '#ec4899']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: true }
+            });
+
+            // Plan Chart
+            const plans = bookingsData.reduce((acc, b) => {
+                if (b.plan !== 'UNKNOWN') {
+                    acc[b.plan] = (acc[b.plan] || 0) + 1;
+                }
+                return acc;
+            }, {});
+
+            const planCtx = document.getElementById('plan-chart');
+            if (window.planChart) window.planChart.destroy();
+            window.planChart = new Chart(planCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(plans),
+                    datasets: [{
+                        label: 'Bookings',
+                        data: Object.values(plans),
+                        backgroundColor: '#3b82f6'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: true }
+            });
+        }
+
+        // Render All Views
+        function renderAllViews() {
+            renderGroupTrips();
+            renderPrivateTrips();
+            renderCustomTrips();
+            renderAllBookingsTable();
+        }
+
+        // Render GROUP Trips (Consolidated)
+        function renderGroupTrips() {
+            const groupBookings = bookingsData.filter(b => b.bookingType === 'GROUP');
+            const consolidated = {};
+
+            groupBookings.forEach(booking => {
+                const key = `${booking.tripDate}_${booking.plan}`;
+                if (!consolidated[key]) {
+                    consolidated[key] = {
+                        tripDate: booking.tripDate,
+                        plan: booking.plan,
+                        bookings: [],
+                        totalPax: 0,
+                        vehicle: localStorage.getItem(`vehicle_${key}`) || '',
+                        driver: localStorage.getItem(`driver_${key}`) || '',
+                        hotels: JSON.parse(localStorage.getItem(`hotels_${key}`) || '[]')
+                    };
+                }
+                consolidated[key].bookings.push(booking);
+                consolidated[key].totalPax += booking.totalPax || 0;
+            });
+
+            const container = document.getElementById('group-trips-container');
+            if (Object.keys(consolidated).length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>No GROUP trips found</p></div>';
+                return;
+            }
+
+            container.innerHTML = Object.entries(consolidated).map(([key, group]) => `
+                <div class="group-card">
+                    <div class="group-header">
+                        <div>
+                            <div class="group-title">
+                                ${formatDate(group.tripDate)} - Plan ${group.plan}
+                            </div>
+                            <div style="color: var(--text-secondary); margin-top: 0.25rem;">
+                                ${group.bookings.length} Booking(s) • ${PLAN_TEMPLATES[group.plan]?.route || 'Custom Route'}
+                            </div>
+                        </div>
+                        <div class="pax-badge">${group.totalPax} PAX</div>
+                    </div>
+                    <div class="booking-list">
+                        ${group.bookings.map(b => `
+                            <div class="booking-item">
+                                <strong>${b.clientName}</strong> - ${b.mobileNumber} - ${b.totalPax} PAX
+                                ${b.specialReq ? `<br><small style="color: var(--warning);">⚠ ${b.specialReq}</small>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="vehicle-section">
+                        <strong>Vehicle:</strong> ${group.vehicle || 'Not Assigned'} &nbsp; | &nbsp;
+                        <strong>Driver:</strong> ${group.driver || 'Not Assigned'}
+                    </div>
+                    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                        <button class="btn btn-primary btn-sm" onclick="manageGroup('${key}')">
+                            <i class="fas fa-cog"></i> Manage Trip
+                        </button>
+                        <button class="btn btn-success btn-sm" onclick="generateGroupWhatsApp('${key}')">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </button>
+                        <button class="btn btn-warning btn-sm" onclick="generateGroupPDFByKey('${key}')">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render PRIVATE Trips
+        function renderPrivateTrips() {
+            const privateBookings = bookingsData.filter(b => b.bookingType === 'PRIVATE');
+            const container = document.getElementById('private-trips-container');
+
+            if (privateBookings.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-user-friends"></i><p>No PRIVATE trips found</p></div>';
+                return;
+            }
+
+            container.innerHTML = privateBookings.map(b => `
+                <div class="group-card">
+                    <div class="group-header">
+                        <div>
+                            <div class="group-title">${b.clientName}</div>
+                            <div style="color: var(--text-secondary); margin-top: 0.25rem;">
+                                ${formatDate(b.tripDate)} • Plan ${b.plan} • ${b.mobileNumber}
+                            </div>
+                        </div>
+                        <div class="pax-badge">${b.totalPax} PAX</div>
+                    </div>
+                    <div style="margin-top: 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div><strong>Total Amount:</strong> ₹${(b.totalAmount || 0).toLocaleString('en-IN')}</div>
+                        <div><strong>Advance:</strong> ₹${(b.advancePaid || 0).toLocaleString('en-IN')}</div>
+                        <div><strong>Balance:</strong> ₹${(b.remAmount || 0).toLocaleString('en-IN')}</div>
+                    </div>
+                    ${b.specialReq ? `<div style="margin-top: 0.5rem; color: var(--warning);"><strong>⚠ Special Requirements:</strong> ${b.specialReq}</div>` : ''}
+                    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                        <button class="btn btn-primary btn-sm" onclick="editBooking(${b.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-warning btn-sm" onclick="generatePrivatePDF(${b.id})">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render CUSTOM Trips
+        function renderCustomTrips() {
+            const customBookings = bookingsData.filter(b => b.bookingType === 'CUSTOM');
+            const container = document.getElementById('custom-trips-container');
+
+            if (customBookings.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-star"></i><p>No CUSTOM trips found</p></div>';
+                return;
+            }
+
+            container.innerHTML = customBookings.map(b => `
+                <div class="group-card">
+                    <div class="group-header">
+                        <div>
+                            <div class="group-title">${b.clientName}</div>
+                            <div style="color: var(--text-secondary); margin-top: 0.25rem;">
+                                ${formatDate(b.tripDate)} • ${b.note} • ${b.mobileNumber}
+                            </div>
+                        </div>
+                        <div class="pax-badge">${b.totalPax} PAX</div>
+                    </div>
+                    <div style="margin-top: 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div><strong>Total Amount:</strong> ₹${(b.totalAmount || 0).toLocaleString('en-IN')}</div>
+                        <div><strong>Advance:</strong> ₹${(b.advancePaid || 0).toLocaleString('en-IN')}</div>
+                        <div><strong>Balance:</strong> ₹${(b.remAmount || 0).toLocaleString('en-IN')}</div>
+                    </div>
+                    ${b.specialReq ? `<div style="margin-top: 0.5rem; color: var(--warning);"><strong>⚠ Special Requirements:</strong> ${b.specialReq}</div>` : ''}
+                    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                        <button class="btn btn-primary btn-sm" onclick="editBooking(${b.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-warning btn-sm" onclick="generatePrivatePDF(${b.id})">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render All Bookings Table
+        function renderAllBookingsTable() {
+            const tbody = document.getElementById('all-bookings-table');
+            tbody.innerHTML = bookingsData.map(b => `
+                <tr>
+                    <td>${b.id}</td>
+                    <td>${b.clientName}</td>
+                    <td>${b.mobileNumber}</td>
+                    <td><span class="badge badge-${b.bookingType.toLowerCase()}">${b.bookingType}</span></td>
+                    <td>${b.plan}</td>
+                    <td>${formatDate(b.tripDate)}</td>
+                    <td>${b.totalPax}</td>
+                    <td>₹${(b.totalAmount || 0).toLocaleString('en-IN')}</td>
+                    <td>₹${(b.advancePaid || 0).toLocaleString('en-IN')}</td>
+                    <td>₹${(b.remAmount || 0).toLocaleString('en-IN')}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="editBooking(${b.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Edit Booking
+        function editBooking(id) {
+            const booking = bookingsData.find(b => b.id === id);
+            if (!booking) return;
+
+            currentBooking = booking;
+            document.getElementById('edit-id').value = booking.id;
+            document.getElementById('edit-clientName').value = booking.clientName || '';
+            document.getElementById('edit-mobileNumber').value = booking.mobileNumber || '';
+            document.getElementById('edit-mailId').value = booking.mailId || '';
+            document.getElementById('edit-alternateNo').value = booking.alternateNo || '';
+            document.getElementById('edit-groupPvt').value = booking.bookingType || 'GROUP';
+            document.getElementById('edit-plan').value = booking.plan || 'A';
+            document.getElementById('edit-tripDate').value = booking.tripDate || '';
+            document.getElementById('edit-mnlPax').value = booking.mnlPax || 0;
+            document.getElementById('edit-kashPax').value = booking.kashPax || 0;
+            document.getElementById('edit-lehPax').value = booking.lehPax || 0;
+            document.getElementById('edit-totalAmount').value = booking.totalAmount || 0;
+            document.getElementById('edit-advancePaid').value = booking.advancePaid || 0;
+            document.getElementById('edit-specialReq').value = booking.specialReq || '';
+            document.getElementById('edit-bookingBy').value = booking.bookingBy || '';
+
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function saveBooking() {
+            const id = parseInt(document.getElementById('edit-id').value);
+            const bookingIndex = bookingsData.findIndex(b => b.id === id);
+
+            if (bookingIndex === -1) return;
+
+            bookingsData[bookingIndex] = {
+                ...bookingsData[bookingIndex],
+                clientName: document.getElementById('edit-clientName').value,
+                mobileNumber: document.getElementById('edit-mobileNumber').value,
+                mailId: document.getElementById('edit-mailId').value,
+                alternateNo: document.getElementById('edit-alternateNo').value,
+                groupPvt: document.getElementById('edit-groupPvt').value,
+                plan: document.getElementById('edit-plan').value,
+                tripDate: document.getElementById('edit-tripDate').value,
+                mnlPax: parseFloat(document.getElementById('edit-mnlPax').value) || 0,
+                kashPax: parseFloat(document.getElementById('edit-kashPax').value) || 0,
+                lehPax: parseFloat(document.getElementById('edit-lehPax').value) || 0,
+                totalAmount: parseFloat(document.getElementById('edit-totalAmount').value) || 0,
+                advancePaid: parseFloat(document.getElementById('edit-advancePaid').value) || 0,
+                specialReq: document.getElementById('edit-specialReq').value,
+                bookingBy: document.getElementById('edit-bookingBy').value,
+                bookingType: document.getElementById('edit-groupPvt').value,
+                totalPax: (parseFloat(document.getElementById('edit-mnlPax').value) || 0) +
+                          (parseFloat(document.getElementById('edit-kashPax').value) || 0) +
+                          (parseFloat(document.getElementById('edit-lehPax').value) || 0),
+                remAmount: (parseFloat(document.getElementById('edit-totalAmount').value) || 0) -
+                          (parseFloat(document.getElementById('edit-advancePaid').value) || 0)
+            };
+
+            closeEditModal();
+            updateDashboard();
+            renderAllViews();
+            alert('Booking updated successfully!');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+        }
+
+        // Manage Group
+        function manageGroup(key) {
+            const [date, plan] = key.split('_');
+            const groupBookings = bookingsData.filter(b =>
+                b.bookingType === 'GROUP' && b.tripDate === date && b.plan === plan
+            );
+
+            const totalPax = groupBookings.reduce((sum, b) => sum + (b.totalPax || 0), 0);
+            const vehicle = localStorage.getItem(`vehicle_${key}`) || '';
+            const driver = localStorage.getItem(`driver_${key}`) || '';
+            const hotels = JSON.parse(localStorage.getItem(`hotels_${key}`) || '[]');
+
+            currentGroup = { key, date, plan, bookings: groupBookings, totalPax, vehicle, driver, hotels };
+
+            const modalBody = document.getElementById('groupModalBody');
+            modalBody.innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <h3>${formatDate(date)} - Plan ${plan}</h3>
+                    <p style="color: var(--text-secondary);">${groupBookings.length} Booking(s) • ${totalPax} PAX total</p>
+                </div>
+
+                <div class="form-grid" style="margin-bottom: 1.5rem;">
+                    <div class="form-group">
+                        <label>Vehicle Type</label>
+                        <select id="group-vehicle" onchange="saveGroupVehicle()">
+                            <option value="">Select Vehicle</option>
+                            ${VEHICLES.map(v => `<option value="${v}" ${v === vehicle ? 'selected' : ''}>${v}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Driver Name</label>
+                        <input type="text" id="group-driver" value="${driver}" onchange="saveGroupDriver()">
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">Hotels</h4>
+                <div id="hotel-list" class="hotel-list">
+                    ${hotels.map((h, i) => `
+                        <div class="hotel-item">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div style="flex: 1;">
+                                    <strong>${h.city}</strong> - ${h.name}<br>
+                                    <small>${h.checkIn} to ${h.checkOut} • ${h.foodPlan}</small>
+                                    ${h.remarks ? `<br><small style="color: var(--text-secondary);">${h.remarks}</small>` : ''}
+                                </div>
+                                <button class="btn btn-sm" style="background: var(--danger); color: white;" onclick="removeHotel(${i})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <button class="btn btn-primary btn-sm" style="margin-top: 1rem;" onclick="showAddHotelForm()">
+                    <i class="fas fa-plus"></i> Add Hotel
+                </button>
+
+                <div id="add-hotel-form" style="display: none; margin-top: 1rem; padding: 1rem; background: var(--light-bg); border-radius: 8px;">
+                    <h4 style="margin-bottom: 1rem;">Add Hotel</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" id="hotel-city">
+                        </div>
+                        <div class="form-group">
+                            <label>Hotel Name</label>
+                            <input type="text" id="hotel-name">
+                        </div>
+                        <div class="form-group">
+                            <label>Check-in Date</label>
+                            <input type="date" id="hotel-checkin">
+                        </div>
+                        <div class="form-group">
+                            <label>Check-out Date</label>
+                            <input type="date" id="hotel-checkout">
+                        </div>
+                        <div class="form-group">
+                            <label>Food Plan</label>
+                            <select id="hotel-food">
+                                <option value="MAP">MAP (Breakfast + Dinner)</option>
+                                <option value="CP">CP (Breakfast Only)</option>
+                                <option value="EP">EP (No Meals)</option>
+                                <option value="AP">AP (All Meals)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Remarks</label>
+                            <input type="text" id="hotel-remarks">
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                        <button class="btn btn-success btn-sm" onclick="addHotel()">
+                            <i class="fas fa-check"></i> Add Hotel
+                        </button>
+                        <button class="btn btn-sm" style="background: var(--secondary); color: white;" onclick="hideAddHotelForm()">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('groupModal').classList.add('active');
+        }
+
+        function saveGroupVehicle() {
+            const vehicle = document.getElementById('group-vehicle').value;
+            localStorage.setItem(`vehicle_${currentGroup.key}`, vehicle);
+            currentGroup.vehicle = vehicle;
+        }
+
+        function saveGroupDriver() {
+            const driver = document.getElementById('group-driver').value;
+            localStorage.setItem(`driver_${currentGroup.key}`, driver);
+            currentGroup.driver = driver;
+        }
+
+        function showAddHotelForm() {
+            document.getElementById('add-hotel-form').style.display = 'block';
+        }
+
+        function hideAddHotelForm() {
+            document.getElementById('add-hotel-form').style.display = 'none';
+        }
+
+        function addHotel() {
+            const hotel = {
+                city: document.getElementById('hotel-city').value,
+                name: document.getElementById('hotel-name').value,
+                checkIn: document.getElementById('hotel-checkin').value,
+                checkOut: document.getElementById('hotel-checkout').value,
+                foodPlan: document.getElementById('hotel-food').value,
+                remarks: document.getElementById('hotel-remarks').value
+            };
+
+            if (!hotel.city || !hotel.name) {
+                alert('Please fill in city and hotel name');
+                return;
+            }
+
+            currentGroup.hotels.push(hotel);
+            localStorage.setItem(`hotels_${currentGroup.key}`, JSON.stringify(currentGroup.hotels));
+            manageGroup(currentGroup.key);
+        }
+
+        function removeHotel(index) {
+            currentGroup.hotels.splice(index, 1);
+            localStorage.setItem(`hotels_${currentGroup.key}`, JSON.stringify(currentGroup.hotels));
+            manageGroup(currentGroup.key);
+        }
+
+        function closeGroupModal() {
+            document.getElementById('groupModal').classList.remove('active');
+            renderAllViews();
+        }
+
+        // WhatsApp Messages
+        function generateGroupWhatsApp(key) {
+            const [date, plan] = key.split('_');
+            const groupBookings = bookingsData.filter(b =>
+                b.bookingType === 'GROUP' && b.tripDate === date && b.plan === plan
+            );
+            const totalPax = groupBookings.reduce((sum, b) => sum + (b.totalPax || 0), 0);
+            const vehicle = localStorage.getItem(`vehicle_${key}`) || 'TBD';
+            const driver = localStorage.getItem(`driver_${key}`) || 'TBD';
+            const hotels = JSON.parse(localStorage.getItem(`hotels_${key}`) || '[]');
+
+            currentGroup = { key, date, plan, bookings: groupBookings, totalPax, vehicle, driver, hotels };
+            showGroupWhatsApp();
+        }
+
+        function showGroupWhatsApp() {
+            if (!currentGroup) return;
+
+            // Driver Message
+            const driverMsg = `🚗 *SNOWMIST HOLIDAYS - DRIVER ASSIGNMENT*
+
+📅 *Trip Date:* ${formatDate(currentGroup.date)}
+🗺️ *Plan:* ${currentGroup.plan} (${PLAN_TEMPLATES[currentGroup.plan]?.route || 'Custom'})
+👥 *Total PAX:* ${currentGroup.totalPax}
+🚙 *Vehicle:* ${currentGroup.vehicle}
+👤 *Driver:* ${currentGroup.driver}
+
+*Passenger List:*
+${currentGroup.bookings.map((b, i) => `${i + 1}. ${b.clientName} - ${b.mobileNumber} (${b.totalPax} PAX)${b.specialReq ? ` ⚠ ${b.specialReq}` : ''}`).join('\n')}
+
+*Hotels:*
+${currentGroup.hotels.map(h => `📍 ${h.city}: ${h.name} (${h.checkIn} to ${h.checkOut}) - ${h.foodPlan}`).join('\n') || 'No hotels assigned yet'}
+
+Please confirm receipt.
+- Snowmist Team`;
+
+            // Hotel Message
+            const hotelMsg = `🏨 *SNOWMIST HOLIDAYS - BOOKING CONFIRMATION*
+
+📅 *Trip Date:* ${formatDate(currentGroup.date)}
+🗺️ *Plan:* ${currentGroup.plan}
+👥 *Total PAX:* ${currentGroup.totalPax}
+
+*Guest Details:*
+${currentGroup.bookings.map((b, i) => `${i + 1}. ${b.clientName} - ${b.mobileNumber} (${b.totalPax} guests)${b.specialReq ? ` ⚠ ${b.specialReq}` : ''}`).join('\n')}
+
+${currentGroup.hotels.map(h => `
+📍 *${h.city} - ${h.name}*
+Check-in: ${h.checkIn}
+Check-out: ${h.checkOut}
+Food Plan: ${h.foodPlan}
+${h.remarks ? `Remarks: ${h.remarks}` : ''}`).join('\n\n')}
+
+Please confirm booking.
+- Snowmist Holidays`;
+
+            // Finance Message
+            const totalRevenue = currentGroup.bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+            const totalAdvance = currentGroup.bookings.reduce((sum, b) => sum + (b.advancePaid || 0), 0);
+            const totalBalance = currentGroup.bookings.reduce((sum, b) => sum + (b.remAmount || 0), 0);
+
+            const financeMsg = `💰 *SNOWMIST HOLIDAYS - FINANCE REPORT*
+
+📅 *Trip Date:* ${formatDate(currentGroup.date)}
+🗺️ *Plan:* ${currentGroup.plan}
+👥 *Total PAX:* ${currentGroup.totalPax}
+📋 *Bookings:* ${currentGroup.bookings.length}
+
+*Financial Summary:*
+💵 Total Revenue: ₹${totalRevenue.toLocaleString('en-IN')}
+✅ Advance Received: ₹${totalAdvance.toLocaleString('en-IN')}
+⏳ Balance Due: ₹${totalBalance.toLocaleString('en-IN')}
+
+*Booking Details:*
+${currentGroup.bookings.map((b, i) => `${i + 1}. ${b.clientName}
+   Total: ₹${(b.totalAmount || 0).toLocaleString('en-IN')}
+   Advance: ₹${(b.advancePaid || 0).toLocaleString('en-IN')}
+   Balance: ₹${(b.remAmount || 0).toLocaleString('en-IN')}`).join('\n\n')}
+
+- Finance Team, Snowmist Holidays`;
+
+            document.getElementById('driver-message').textContent = driverMsg;
+            document.getElementById('hotel-message').textContent = hotelMsg;
+            document.getElementById('finance-message').textContent = financeMsg;
+
+            document.getElementById('whatsappModal').classList.add('active');
+        }
+
+        function switchWhatsAppTab(tab) {
+            document.querySelectorAll('#whatsappModal .tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('#whatsappModal .tab-content').forEach(c => c.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(`whatsapp-${tab}`).classList.add('active');
+        }
+
+        function copyMessage(type) {
+            const text = document.getElementById(`${type}-message`).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Message copied to clipboard!');
+            });
+        }
+
+        function closeWhatsAppModal() {
+            document.getElementById('whatsappModal').classList.remove('active');
+        }
+
+        // PDF Generation
+        function generateGroupPDFByKey(key) {
+            const [date, plan] = key.split('_');
+            const groupBookings = bookingsData.filter(b =>
+                b.bookingType === 'GROUP' && b.tripDate === date && b.plan === plan
+            );
+            const totalPax = groupBookings.reduce((sum, b) => sum + (b.totalPax || 0), 0);
+            const vehicle = localStorage.getItem(`vehicle_${key}`) || 'TBD';
+            const driver = localStorage.getItem(`driver_${key}`) || 'TBD';
+
+            generatePDF({
+                title: `GROUP Trip - ${formatDate(date)} - Plan ${plan}`,
+                bookings: groupBookings,
+                vehicle,
+                driver,
+                totalPax
+            });
+        }
+
+        function generatePrivatePDF(id) {
+            const booking = bookingsData.find(b => b.id === id);
+            if (!booking) return;
+
+            generatePDF({
+                title: `${booking.bookingType} Trip - ${booking.clientName}`,
+                bookings: [booking],
+                totalPax: booking.totalPax
+            });
+        }
+
+        function generatePDF(data) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Header
+            doc.setFontSize(20);
+            doc.setTextColor(37, 99, 235);
+            doc.text('SNOWMIST HOLIDAYS', 105, 20, { align: 'center' });
+
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(data.title, 105, 30, { align: 'center' });
+
+            // Summary
+            let y = 45;
+            doc.setFontSize(10);
+            doc.text(`Total PAX: ${data.totalPax}`, 20, y);
+            if (data.vehicle) doc.text(`Vehicle: ${data.vehicle}`, 20, y + 7);
+            if (data.driver) doc.text(`Driver: ${data.driver}`, 20, y + 14);
+
+            // Bookings
+            y += 30;
+            doc.setFontSize(14);
+            doc.text('Booking Details', 20, y);
+            y += 10;
+
+            doc.setFontSize(10);
+            data.bookings.forEach((b, i) => {
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+
+                doc.text(`${i + 1}. ${b.clientName}`, 20, y);
+                doc.text(`Phone: ${b.mobileNumber}`, 30, y + 7);
+                doc.text(`PAX: ${b.totalPax}`, 30, y + 14);
+                doc.text(`Amount: ₹${(b.totalAmount || 0).toLocaleString('en-IN')}`, 30, y + 21);
+                doc.text(`Advance: ₹${(b.advancePaid || 0).toLocaleString('en-IN')}`, 30, y + 28);
+                doc.text(`Balance: ₹${(b.remAmount || 0).toLocaleString('en-IN')}`, 30, y + 35);
+                if (b.specialReq) doc.text(`Special: ${b.specialReq}`, 30, y + 42);
+
+                y += b.specialReq ? 50 : 45;
+            });
+
+            doc.save(`${data.title.replace(/[^a-z0-9]/gi, '_')}.pdf`);
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Utility Functions
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+            return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function formatCurrency(amount) {
+            return '₹' + (amount || 0).toLocaleString('en-IN');
+        }
+    </script>
+</body>
+</html>
