@@ -1,0 +1,2080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowmist Holidays - CSV Import & Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary-color: #64748b;
+            --success-color: #059669;
+            --warning-color: #f59e0b;
+            --danger-color: #dc2626;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo svg {
+            width: 36px;
+            height: 36px;
+        }
+
+        .company-info h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .company-info p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        /* CSV Import Section */
+        .csv-import-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .csv-import-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .csv-import-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .csv-import-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .csv-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            background: var(--light-bg);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .csv-upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .csv-upload-area.dragover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .csv-upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .csv-upload-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .csv-upload-hint {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .csv-file-input {
+            display: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Booking Form */
+        .booking-form {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+
+        .booking-form.active {
+            display: block;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .form-section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-input[readonly] {
+            background: var(--light-bg);
+            color: var(--text-secondary);
+        }
+
+        /* Hotel Cards */
+        .hotel-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .hotel-card {
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .hotel-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: 1rem;
+        }
+
+        .hotel-card-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .hotel-remove-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .hotel-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .add-hotel-btn {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .add-hotel-btn:hover {
+            background: #047857;
+            transform: translateY(-1px);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline:hover {
+            background: var(--light-bg);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        /* Bookings List */
+        .bookings-list {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+
+        .bookings-list.active {
+            display: block;
+        }
+
+        .bookings-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .bookings-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            width: 300px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .bookings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .booking-card {
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.2s;
+        }
+
+        .booking-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .booking-card-header {
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .booking-pnr {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+        }
+
+        .booking-client {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        .booking-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .booking-detail-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .booking-detail-value {
+            color: var(--text-primary);
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* WhatsApp Templates */
+        .whatsapp-templates {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .template-item {
+            background: var(--light-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .template-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .template-message {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+            white-space: pre-line;
+            font-family: monospace;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 80px;
+            z-index: 99;
+        }
+
+        .nav-tabs-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-tab:hover {
+            color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .nav-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--success-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            color: var(--success-color);
+            font-size: 1.25rem;
+        }
+
+        .toast-message {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .csv-upload-area {
+                padding: 2rem 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hotel-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .bookings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .booking-card {
+                padding: 1rem;
+            }
+
+            .template-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Auto-populate indicator */
+        .auto-filled {
+            background: rgba(5, 150, 105, 0.1) !important;
+            border-color: var(--success-color) !important;
+        }
+
+        .missing-data {
+            background: rgba(245, 158, 11, 0.1) !important;
+            border-color: var(--warning-color) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z" fill="#2563eb" stroke="#2563eb" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M12 16V22" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="company-info">
+                        <h1>Snowmist Holidays</h1>
+                        <p>CSV Import & Management System</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline" onclick="exportAllData()">
+                        <i class="fas fa-download"></i>
+                        Export All
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <div class="nav-tabs-container">
+                <button class="nav-tab active" data-tab="import">
+                    <i class="fas fa-upload"></i>
+                    CSV Import
+                </button>
+                <button class="nav-tab" data-tab="form">
+                    <i class="fas fa-edit"></i>
+                    Edit Booking
+                </button>
+                <button class="nav-tab" data-tab="list">
+                    <i class="fas fa-list"></i>
+                    All Bookings
+                </button>
+                <button class="nav-tab" data-tab="analytics">
+                    <i class="fas fa-chart-bar"></i>
+                    Analytics
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- CSV Import Section -->
+            <section class="content-section active" id="import">
+                <div class="csv-import-section">
+                    <div class="csv-import-header">
+                        <h2 class="csv-import-title">Import Bookings from CSV</h2>
+                        <p class="csv-import-subtitle">Upload your CSV file to auto-populate booking data. All fields can be edited after import.</p>
+                    </div>
+                    
+                    <div class="csv-upload-area" onclick="document.getElementById('csvFileInput').click()">
+                        <div class="csv-upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="csv-upload-text">Drop CSV file here or click to upload</div>
+                        <div class="csv-upload-hint">Supports .csv files with booking data</div>
+                    </div>
+                    
+                    <input type="file" id="csvFileInput" class="csv-file-input" accept=".csv" onchange="handleCSVUpload(event)">
+                    
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <button class="btn btn-primary" onclick="downloadSampleCSV()">
+                            <i class="fas fa-download"></i>
+                            Download Sample CSV Template
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Booking Form Section -->
+            <section class="content-section" id="form">
+                <div class="booking-form">
+                    <form id="bookingForm">
+                        <!-- Client Information -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-user"></i>
+                                Client Information
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">PNR Number</label>
+                                    <input type="text" class="form-input" id="pnr" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Client Name *</label>
+                                    <input type="text" class="form-input" id="clientName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Contact Number *</label>
+                                    <input type="tel" class="form-input" id="clientContact" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Alternate Number</label>
+                                    <input type="tel" class="form-input" id="alternateContact">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email ID</label>
+                                    <input type="email" class="form-input" id="clientEmail">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Total PAX *</label>
+                                    <input type="number" class="form-input" id="totalPax" required min="1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trip Details -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-route"></i>
+                                Trip Details
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Trip Start Date *</label>
+                                    <input type="date" class="form-input" id="tripStartDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Trip End Date *</label>
+                                    <input type="date" class="form-input" id="tripEndDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Total Days</label>
+                                    <input type="number" class="form-input" id="totalDays" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Plan Type *</label>
+                                    <select class="form-select" id="planType" required>
+                                        <option value="">Select Plan</option>
+                                        <option value="A">Plan A</option>
+                                        <option value="A2">Plan A2</option>
+                                        <option value="B">Plan B</option>
+                                        <option value="C">Plan C</option>
+                                        <option value="D">Plan D</option>
+                                        <option value="G">Plan G</option>
+                                        <option value="H">Plan H</option>
+                                        <option value="Y">Plan Y</option>
+                                        <option value="Z">Plan Z</option>
+                                        <option value="CUSTOM">Custom Plan</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Vehicle Ops Number</label>
+                                    <input type="text" class="form-input" id="vehicleOpsNo" value="7888158815" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Emergency Number</label>
+                                    <input type="text" class="form-input" id="emergencyNo" value="7888148814" readonly style="color: var(--danger-color); font-weight: bold;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pickup Details -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Pickup & Drop Details
+                            </h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                <div>
+                                    <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Pickup Details</h4>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label class="form-label">Pickup Date</label>
+                                            <input type="date" class="form-input" id="pickupDate">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Pickup Time</label>
+                                            <input type="time" class="form-input" id="pickupTime">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Pickup Location</label>
+                                            <input type="text" class="form-input" id="pickupLocation">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Drop Off Details</h4>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label class="form-label">Drop Date</label>
+                                            <input type="date" class="form-input" id="dropDate">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Drop Time</label>
+                                            <input type="time" class="form-input" id="dropTime">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Drop Location</label>
+                                            <input type="text" class="form-input" id="dropLocation">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hotel Information -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-hotel"></i>
+                                Hotel Information
+                            </h3>
+                            <div class="hotel-cards" id="hotelCards">
+                                <!-- Hotel cards will be dynamically added here -->
+                            </div>
+                            <button type="button" class="add-hotel-btn" onclick="addHotelCard()">
+                                <i class="fas fa-plus"></i>
+                                Add Hotel
+                            </button>
+                        </div>
+
+                        <!-- Finance Information -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-rupee-sign"></i>
+                                Finance Information (Rupees)
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Per Person Cost</label>
+                                    <input type="number" class="form-input" id="perPersonCost" onchange="calculateTotal()">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Total Cost</label>
+                                    <input type="number" class="form-input" id="totalCost" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">1st Advance</label>
+                                    <input type="number" class="form-input" id="firstAdvance" onchange="calculateBalance()">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">1st Advance Mode</label>
+                                    <select class="form-select" id="firstAdvanceMode">
+                                        <option value="">Select Mode</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Bank Transfer">Bank Transfer</option>
+                                        <option value="Credit Card">Credit Card</option>
+                                        <option value="Debit Card">Debit Card</option>
+                                        <option value="UPI">UPI</option>
+                                        <option value="Cheque">Cheque</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">2nd Advance</label>
+                                    <input type="number" class="form-input" id="secondAdvance" onchange="calculateBalance()">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">2nd Advance Mode</label>
+                                    <select class="form-select" id="secondAdvanceMode">
+                                        <option value="">Select Mode</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Bank Transfer">Bank Transfer</option>
+                                        <option value="Credit Card">Credit Card</option>
+                                        <option value="Debit Card">Debit Card</option>
+                                        <option value="UPI">UPI</option>
+                                        <option value="Cheque">Cheque</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Balance Amount</label>
+                                    <input type="number" class="form-input" id="balanceAmount" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Balance Mode</label>
+                                    <select class="form-select" id="balanceMode">
+                                        <option value="">Select Mode</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Bank Transfer">Bank Transfer</option>
+                                        <option value="Credit Card">Credit Card</option>
+                                        <option value="Debit Card">Debit Card</option>
+                                        <option value="UPI">UPI</option>
+                                        <option value="Cheque">Cheque</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Operations Information -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-cogs"></i>
+                                Operations Information
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Sold By</label>
+                                    <select class="form-select" id="soldBy">
+                                        <option value="">Select Sales Person</option>
+                                        <option value="PS">PS</option>
+                                        <option value="JD">JD</option>
+                                        <option value="SAI">SAI</option>
+                                        <option value="SHILPA">SHILPA</option>
+                                        <option value="NAGPUR">NAGPUR</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Must Remarks</label>
+                                    <textarea class="form-textarea" id="mustRemarks" placeholder="Any special instructions or remarks..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                            <button type="button" class="btn btn-success" onclick="saveBooking()">
+                                <i class="fas fa-save"></i>
+                                Save Booking
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="generatePDF()">
+                                <i class="fas fa-file-pdf"></i>
+                                Generate PDF
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="generateWhatsAppMessages()">
+                                <i class="fab fa-whatsapp"></i>
+                                WhatsApp Messages
+                            </button>
+                            <button type="button" class="btn btn-warning" onclick="clearForm()">
+                                <i class="fas fa-eraser"></i>
+                                Clear Form
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Bookings List Section -->
+            <section class="content-section" id="list">
+                <div class="bookings-list">
+                    <div class="bookings-header">
+                        <h2 class="bookings-title">All Bookings</h2>
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" placeholder="Search by client name or PNR..." oninput="searchBookings(this.value)">
+                        </div>
+                    </div>
+                    <div class="bookings-grid" id="bookingsGrid">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            No bookings imported yet. Please upload a CSV file to get started.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section class="content-section" id="analytics">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-suitcase-rolling"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalBookingsCount">0</div>
+                        <div class="stat-label">Total Bookings</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon success">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalPaxCount">0</div>
+                        <div class="stat-label">Total PAX</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalRevenueCount">₹0</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon danger">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalBalanceCount">₹0</div>
+                        <div class="stat-label">Pending Balance</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Booking Analytics</h3>
+                    <div class="chart-wrapper" style="height: 400px;">
+                        <canvas id="analyticsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- WhatsApp Modal -->
+    <div class="modal" id="whatsappModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">WhatsApp Message Templates</h3>
+                <button class="modal-close" onclick="closeWhatsAppModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="whatsapp-templates" id="whatsappTemplates">
+                    <!-- Templates will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle toast-icon"></i>
+        <span class="toast-message">Operation completed successfully!</span>
+    </div>
+
+    <script>
+        // Global variables
+        let bookingsData = [];
+        let currentBooking = {};
+        let hotelCounter = 0;
+        let analyticsChart = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            generatePNR();
+            addHotelCard(); // Add first hotel card
+            updateAnalytics();
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Tab navigation
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+                    switchTab(tabName);
+                });
+            });
+
+            // Date change handlers
+            document.getElementById('tripStartDate').addEventListener('change', calculateDays);
+            document.getElementById('tripEndDate').addEventListener('change', calculateDays);
+
+            // Drag and drop for CSV
+            const uploadArea = document.querySelector('.csv-upload-area');
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('dragleave', handleDragLeave);
+            uploadArea.addEventListener('drop', handleDrop);
+        }
+
+        // Switch tabs
+        function switchTab(tabName) {
+            // Update active tab
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Update active content section
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+
+            // Update analytics if analytics tab is selected
+            if (tabName === 'analytics') {
+                updateAnalytics();
+            }
+        }
+
+        // Handle CSV upload
+        function handleCSVUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+                showToast('Please upload a valid CSV file', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const csvData = e.target.result;
+                    parseCSV(csvData);
+                    showToast('CSV file uploaded successfully!');
+                } catch (error) {
+                    console.error('Error parsing CSV:', error);
+                    showToast('Error parsing CSV file', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Handle drag and drop
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const csvData = e.target.result;
+                            parseCSV(csvData);
+                            showToast('CSV file uploaded successfully!');
+                        } catch (error) {
+                            console.error('Error parsing CSV:', error);
+                            showToast('Error parsing CSV file', 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                } else {
+                    showToast('Please upload a CSV file', 'error');
+                }
+            }
+        }
+
+        // Parse CSV data
+        function parseCSV(csvData) {
+            const lines = csvData.split('\n');
+            const headers = lines[0].split(',');
+            
+            bookingsData = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                
+                const values = lines[i].split(',');
+                const booking = {};
+                
+                // Map CSV columns to booking object
+                headers.forEach((header, index) => {
+                    const key = header.trim().replace(/"/g, '').toLowerCase().replace(/\s+/g, '');
+                    const value = values[index] ? values[index].trim().replace(/"/g, '') : '';
+                    booking[key] = value;
+                });
+                
+                // Generate PNR if not present
+                if (!booking.pnr) {
+                    booking.pnr = generatePNR();
+                }
+                
+                // Add to bookings data
+                bookingsData.push({
+                    id: bookingsData.length + 1,
+                    pnr: booking.pnr || generatePNR(),
+                    clientName: booking.clientname || booking.client || '',
+                    clientContact: booking.clientcontact || booking.contact || '',
+                    alternateContact: booking.alternatecontact || '',
+                    clientEmail: booking.clientemail || booking.email || '',
+                    totalPax: parseInt(booking.totalpax || booking.pax || '0'),
+                    tripStartDate: booking.tripstartdate || booking.startdate || '',
+                    tripEndDate: booking.tripenddate || booking.enddate || '',
+                    planType: booking.plantype || booking.plan || '',
+                    pickupDate: booking.pickupdate || '',
+                    pickupTime: booking.pickuptime || '',
+                    pickupLocation: booking.pickuplocation || '',
+                    dropDate: booking.dropdate || '',
+                    dropTime: booking.droptime || '',
+                    dropLocation: booking.droplocation || '',
+                    perPersonCost: parseFloat(booking.perpersoncost || '0'),
+                    totalCost: parseFloat(booking.totalcost || '0'),
+                    firstAdvance: parseFloat(booking.firstadvance || '0'),
+                    firstAdvanceMode: booking.firstadvancemode || '',
+                    secondAdvance: parseFloat(booking.secondadvance || '0'),
+                    secondAdvanceMode: booking.secondadvancemode || '',
+                    balanceAmount: parseFloat(booking.balanceamount || '0'),
+                    balanceMode: booking.balancemode || '',
+                    soldBy: booking.soldby || '',
+                    mustRemarks: booking.mustremarks || booking.remarks || '',
+                    hotels: [] // Will be populated based on plan
+                });
+            }
+            
+            // Auto-populate first booking in form
+            if (bookingsData.length > 0) {
+                populateForm(bookingsData[0]);
+                loadBookingsList();
+                updateAnalytics();
+                switchTab('form');
+            }
+        }
+
+        // Populate form with booking data
+        function populateForm(booking) {
+            currentBooking = booking;
+            
+            // Auto-populate fields and mark them
+            Object.keys(booking).forEach(key => {
+                const element = document.getElementById(key);
+                if (element && booking[key]) {
+                    element.value = booking[key];
+                    element.classList.add('auto-filled');
+                }
+            });
+            
+            // Calculate days and totals
+            calculateDays();
+            calculateTotal();
+            
+            // Mark empty required fields
+            const requiredFields = ['clientName', 'clientContact', 'totalPax', 'tripStartDate', 'tripEndDate'];
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field);
+                if (element && !element.value) {
+                    element.classList.add('missing-data');
+                }
+            });
+        }
+
+        // Generate PNR
+        function generatePNR() {
+            const now = new Date();
+            const month = now.toLocaleString('default', { month: 'short' }).toUpperCase();
+            const year = now.getFullYear().toString().slice(-2);
+            const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            const pnr = `SM${month}${year}-${randomNum}`;
+            document.getElementById('pnr').value = pnr;
+            return pnr;
+        }
+
+        // Calculate total days
+        function calculateDays() {
+            const startDate = document.getElementById('tripStartDate').value;
+            const endDate = document.getElementById('tripEndDate').value;
+            
+            if (startDate && endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                const diffTime = Math.abs(end - start);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                document.getElementById('totalDays').value = diffDays;
+            }
+        }
+
+        // Calculate total cost
+        function calculateTotal() {
+            const pax = parseInt(document.getElementById('totalPax').value) || 0;
+            const perPersonCost = parseFloat(document.getElementById('perPersonCost').value) || 0;
+            const total = pax * perPersonCost;
+            document.getElementById('totalCost').value = total;
+            calculateBalance();
+        }
+
+        // Calculate balance
+        function calculateBalance() {
+            const totalCost = parseFloat(document.getElementById('totalCost').value) || 0;
+            const firstAdvance = parseFloat(document.getElementById('firstAdvance').value) || 0;
+            const secondAdvance = parseFloat(document.getElementById('secondAdvance').value) || 0;
+            const balance = totalCost - (firstAdvance + secondAdvance);
+            document.getElementById('balanceAmount').value = Math.max(0, balance);
+        }
+
+        // Add hotel card
+        function addHotelCard() {
+            hotelCounter++;
+            const hotelCards = document.getElementById('hotelCards');
+            const hotelCard = document.createElement('div');
+            hotelCard.className = 'hotel-card';
+            hotelCard.innerHTML = `
+                <div class="hotel-card-header">
+                    <div class="hotel-card-title">Hotel ${hotelCounter}</div>
+                    <button type="button" class="hotel-remove-btn" onclick="removeHotelCard(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="hotel-form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Hotel Name</label>
+                        <input type="text" class="form-input" name="hotelName${hotelCounter}" placeholder="Enter hotel name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <select class="form-select" name="hotelCity${hotelCounter}">
+                            <option value="">Select City</option>
+                            <option value="Manali">Manali</option>
+                            <option value="Shimla">Shimla</option>
+                            <option value="Kasol">Kasol</option>
+                            <option value="Mcleodganj">Mcleodganj</option>
+                            <option value="Dalhousie">Dalhousie</option>
+                            <option value="Dharamshala">Dharamshala</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Amritsar">Amritsar</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Check-in Date</label>
+                        <input type="date" class="form-input" name="checkinDate${hotelCounter}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Check-out Date</label>
+                        <input type="date" class="form-input" name="checkoutDate${hotelCounter}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Food Plan</label>
+                        <select class="form-select" name="foodPlan${hotelCounter}">
+                            <option value="">Select Plan</option>
+                            <option value="MAP">MAP (Modified American Plan)</option>
+                            <option value="CP">CP (Continental Plan)</option>
+                            <option value="EP">EP (European Plan)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Remarks</label>
+                        <input type="text" class="form-input" name="hotelRemarks${hotelCounter}" placeholder="Special requirements...">
+                    </div>
+                </div>
+            `;
+            hotelCards.appendChild(hotelCard);
+        }
+
+        // Remove hotel card
+        function removeHotelCard(button) {
+            button.closest('.hotel-card').remove();
+        }
+
+        // Save booking
+        function saveBooking() {
+            const formData = new FormData(document.getElementById('bookingForm'));
+            const booking = {};
+            
+            // Get all form data
+            for (let [key, value] of formData.entries()) {
+                booking[key] = value;
+            }
+            
+            // Add hotels data
+            booking.hotels = [];
+            for (let i = 1; i <= hotelCounter; i++) {
+                const hotelName = document.querySelector(`[name="hotelName${i}"]`)?.value;
+                if (hotelName) {
+                    booking.hotels.push({
+                        name: hotelName,
+                        city: document.querySelector(`[name="hotelCity${i}"]`)?.value || '',
+                        checkinDate: document.querySelector(`[name="checkinDate${i}"]`)?.value || '',
+                        checkoutDate: document.querySelector(`[name="checkoutDate${i}"]`)?.value || '',
+                        foodPlan: document.querySelector(`[name="foodPlan${i}"]`)?.value || '',
+                        remarks: document.querySelector(`[name="hotelRemarks${i}"]`)?.value || ''
+                    });
+                }
+            }
+            
+            // Add to bookings data
+            const existingIndex = bookingsData.findIndex(b => b.pnr === booking.pnr);
+            if (existingIndex >= 0) {
+                bookingsData[existingIndex] = { ...bookingsData[existingIndex], ...booking };
+            } else {
+                booking.id = bookingsData.length + 1;
+                bookingsData.push(booking);
+            }
+            
+            loadBookingsList();
+            updateAnalytics();
+            showToast('Booking saved successfully!');
+        }
+
+        // Load bookings list
+        function loadBookingsList() {
+            const grid = document.getElementById('bookingsGrid');
+            
+            if (bookingsData.length === 0) {
+                grid.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        No bookings imported yet. Please upload a CSV file to get started.
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = bookingsData.map(booking => `
+                <div class="booking-card">
+                    <div class="booking-card-header">
+                        <div class="booking-pnr">${booking.pnr}</div>
+                    </div>
+                    <div class="booking-client">${booking.clientName || 'N/A'}</div>
+                    <div class="booking-details">
+                        <div class="booking-detail">
+                            <div class="booking-detail-label">Contact</div>
+                            <div class="booking-detail-value">${booking.clientContact || 'N/A'}</div>
+                        </div>
+                        <div class="booking-detail">
+                            <div class="booking-detail-label">PAX</div>
+                            <div class="booking-detail-value">${booking.totalPax || 0}</div>
+                        </div>
+                        <div class="booking-detail">
+                            <div class="booking-detail-label">Plan</div>
+                            <div class="booking-detail-value">${booking.planType || 'N/A'}</div>
+                        </div>
+                        <div class="booking-detail">
+                            <div class="booking-detail-label">Trip Dates</div>
+                            <div class="booking-detail-value">${formatDate(booking.tripStartDate)} - ${formatDate(booking.tripEndDate)}</div>
+                        </div>
+                        <div class="booking-detail">
+                            <div class="booking-detail-label">Total Cost</div>
+                            <div class="booking-detail-value">₹${(booking.totalCost || 0).toLocaleString('en-IN')}</div>
+                        </div>
+                        <div class="booking-detail">
+                            <div class="booking-detail-label">Balance</div>
+                            <div class="booking-detail-value">₹${(booking.balanceAmount || 0).toLocaleString('en-IN')}</div>
+                        </div>
+                    </div>
+                    <div class="booking-actions">
+                        <button class="btn btn-primary btn-sm" onclick="editBooking('${booking.pnr}')">
+                            <i class="fas fa-edit"></i>
+                            Edit
+                        </button>
+                        <button class="btn btn-success btn-sm" onclick="generateBookingPDF('${booking.pnr}')">
+                            <i class="fas fa-file-pdf"></i>
+                            PDF
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="generateBookingWhatsApp('${booking.pnr}')">
+                            <i class="fab fa-whatsapp"></i>
+                            WhatsApp
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteBooking('${booking.pnr}')">
+                            <i class="fas fa-trash"></i>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Edit booking
+        function editBooking(pnr) {
+            const booking = bookingsData.find(b => b.pnr === pnr);
+            if (booking) {
+                populateForm(booking);
+                switchTab('form');
+                showToast('Booking loaded for editing');
+            }
+        }
+
+        // Delete booking
+        function deleteBooking(pnr) {
+            if (confirm('Are you sure you want to delete this booking?')) {
+                bookingsData = bookingsData.filter(b => b.pnr !== pnr);
+                loadBookingsList();
+                updateAnalytics();
+                showToast('Booking deleted successfully');
+            }
+        }
+
+        // Search bookings
+        function searchBookings(searchTerm) {
+            const filteredBookings = bookingsData.filter(booking => 
+                (booking.clientName && booking.clientName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (booking.pnr && booking.pnr.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (booking.clientContact && booking.clientContact.includes(searchTerm))
+            );
+            
+            const grid = document.getElementById('bookingsGrid');
+            if (filteredBookings.length === 0) {
+                grid.innerHTML = '<div class="loading">No bookings found matching your search.</div>';
+                return;
+            }
+            
+            grid.innerHTML = filteredBookings.map(booking => `
+                <div class="booking-card">
+                    <div class="booking-card-header">
+                        <div class="booking-pnr">${booking.pnr}</div>
+                    </div>
+                    <div class="booking-client">${booking.clientName || 'N/A'}</div>
+                    <div class="booking-details">
+                        <div class="booking-detail">
+                            <div class="booking-detail-label">Contact</div>
+                            <div class="booking-detail-value">${booking.clientContact || 'N/A'}</div>
+                        </div>
+                        <div class="booking-detail">
+                            <div class="booking-detail-label">PAX</div>
+                            <div class="booking-detail-value">${booking.totalPax || 0}</div>
+                        </div>
+                        <div class="booking-detail">
+                            <div class="booking-detail-label">Plan</div>
+                            <div class="booking-detail-value">${booking.planType || 'N/A'}</div>
+                        </div>
+                        <div class="booking-detail">
+                            <div class="booking-detail-label">Trip Dates</div>
+                            <div class="booking-detail-value">${formatDate(booking.tripStartDate)} - ${formatDate(booking.tripEndDate)}</div>
+                        </div>
+                        <div class="booking-detail">
+                            <div class="booking-detail-label">Total Cost</div>
+                            <div class="booking-detail-value">₹${(booking.totalCost || 0).toLocaleString('en-IN')}</div>
+                        </div>
+                        <div class="booking-detail">
+                            <div class="booking-detail-label">Balance</div>
+                            <div class="booking-detail-value">₹${(booking.balanceAmount || 0).toLocaleString('en-IN')}</div>
+                        </div>
+                    </div>
+                    <div class="booking-actions">
+                        <button class="btn btn-primary btn-sm" onclick="editBooking('${booking.pnr}')">
+                            <i class="fas fa-edit"></i>
+                            Edit
+                        </button>
+                        <button class="btn btn-success btn-sm" onclick="generateBookingPDF('${booking.pnr}')">
+                            <i class="fas fa-file-pdf"></i>
+                            PDF
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="generateBookingWhatsApp('${booking.pnr}')">
+                            <i class="fab fa-whatsapp"></i>
+                            WhatsApp
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteBooking('${booking.pnr}')">
+                            <i class="fas fa-trash"></i>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Generate PDF for booking
+        function generateBookingPDF(pnr) {
+            const booking = bookingsData.find(b => b.pnr === pnr);
+            if (!booking) return;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Add content
+            doc.setFontSize(20);
+            doc.text('SNOWMIST HOLIDAYS', 20, 30);
+            
+            doc.setFontSize(16);
+            doc.text('Booking Confirmation & Receipt', 20, 50);
+            
+            doc.setFontSize(12);
+            doc.text(`PNR: ${booking.pnr}`, 20, 70);
+            doc.text(`Client Name: ${booking.clientName || 'N/A'}`, 20, 85);
+            doc.text(`Contact: ${booking.clientContact || 'N/A'}`, 20, 100);
+            doc.text(`Email: ${booking.clientEmail || 'N/A'}`, 20, 115);
+            doc.text(`Trip Dates: ${formatDate(booking.tripStartDate)} - ${formatDate(booking.tripEndDate)}`, 20, 130);
+            doc.text(`Plan: ${booking.planType || 'N/A'}`, 20, 145);
+            doc.text(`Total PAX: ${booking.totalPax || 0}`, 20, 160);
+            doc.text(`Total Cost: ₹${(booking.totalCost || 0).toLocaleString('en-IN')}`, 20, 175);
+            doc.text(`Balance: ₹${(booking.balanceAmount || 0).toLocaleString('en-IN')}`, 20, 190);
+
+            // Save PDF
+            doc.save(`${(booking.clientName || 'Booking').replace(/\s+/g, '_')}_${booking.pnr}.pdf`);
+            
+            showToast('PDF generated successfully!');
+        }
+
+        // Generate WhatsApp messages for booking
+        function generateBookingWhatsApp(pnr) {
+            const booking = bookingsData.find(b => b.pnr === pnr);
+            if (!booking) return;
+
+            const templates = [
+                {
+                    title: "Booking Confirmation",
+                    message: `Dear ${booking.clientName || 'Valued Customer'},\n\nYour booking with Snowmist Holidays is confirmed!\n\n📋 PNR: ${booking.pnr}\n📅 Trip Dates: ${formatDate(booking.tripStartDate)} - ${formatDate(booking.tripEndDate)}\n🗺️ Plan: ${booking.planType || 'N/A'}\n👥 Total PAX: ${booking.totalPax || 0}\n💰 Total Cost: ₹${(booking.totalCost || 0).toLocaleString('en-IN')}\n\nThank you for choosing Snowmist Holidays!\n\nContact: 7888148814, 7888158815`
+                },
+                {
+                    title: "Payment Reminder",
+                    message: `Dear ${booking.clientName || 'Valued Customer'},\n\nThis is a gentle reminder for your pending payment.\n\n📋 PNR: ${booking.pnr}\n💰 Total Cost: ₹${(booking.totalCost || 0).toLocaleString('en-IN')}\n💳 Paid: ₹${((booking.firstAdvance || 0) + (booking.secondAdvance || 0)).toLocaleString('en-IN')}\n⏳ Pending Balance: ₹${(booking.balanceAmount || 0).toLocaleString('en-IN')}\n\nPlease clear the balance before your trip date.\n\nSnowmist Holidays`
+                },
+                {
+                    title: "Pre-Trip Instructions",
+                    message: `Dear ${booking.clientName || 'Valued Customer'},\n\nYour trip is approaching! Here are some important instructions:\n\n📋 PNR: ${booking.pnr}\n📅 Trip Dates: ${formatDate(booking.tripStartDate)} - ${formatDate(booking.tripEndDate)}\n🗺️ Plan: ${booking.planType || 'N/A'}\n👥 Total PAX: ${booking.totalPax || 0}\n\n✅ Things to carry:\n• Warm clothes\n• ID proof\n• Medicines (if any)\n• Camera for memories!\n\nContact us for any queries.\n\nSnowmist Holidays`
+                }
+            ];
+
+            const container = document.getElementById('whatsappTemplates');
+            container.innerHTML = templates.map(template => `
+                <div class="template-item">
+                    <div class="template-title">${template.title}</div>
+                    <div class="template-message">${template.message}</div>
+                    <div class="template-actions">
+                        <button class="btn btn-success btn-sm" onclick="copyToClipboard('${template.message.replace(/'/g, "\\'")}')">
+                            <i class="fas fa-copy"></i>
+                            Copy Message
+                        </button>
+                        ${booking.clientContact ? `
+                        <button class="btn btn-primary btn-sm" onclick="sendWhatsAppMessage('${booking.clientContact}', '${template.message.replace(/'/g, "\\'").replace(/\n/g, '\\n')}')">
+                            <i class="fab fa-whatsapp"></i>
+                            Send WhatsApp
+                        </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('whatsappModal').classList.add('active');
+        }
+
+        // Close WhatsApp modal
+        function closeWhatsAppModal() {
+            document.getElementById('whatsappModal').classList.remove('active');
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Message copied to clipboard!');
+            });
+        }
+
+        // Send WhatsApp message
+        function sendWhatsAppMessage(phone, message) {
+            const cleanPhone = phone.replace(/\D/g, '');
+            const url = `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+            showToast('Opening WhatsApp...');
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('bookingForm').reset();
+            generatePNR();
+            document.getElementById('vehicleOpsNo').value = '7888158815';
+            document.getElementById('emergencyNo').value = '7888148814';
+            
+            // Remove auto-filled and missing-data classes
+            document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(element => {
+                element.classList.remove('auto-filled', 'missing-data');
+            });
+            
+            // Clear hotel cards
+            document.getElementById('hotelCards').innerHTML = '';
+            hotelCounter = 0;
+            addHotelCard();
+            
+            showToast('Form cleared successfully!');
+        }
+
+        // Generate PDF
+        function generatePDF() {
+            const booking = getFormData();
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Add content
+            doc.setFontSize(20);
+            doc.text('SNOWMIST HOLIDAYS', 20, 30);
+            
+            doc.setFontSize(16);
+            doc.text('Booking Confirmation & Receipt', 20, 50);
+            
+            doc.setFontSize(12);
+            doc.text(`PNR: ${booking.pnr}`, 20, 70);
+            doc.text(`Client Name: ${booking.clientName || 'N/A'}`, 20, 85);
+            doc.text(`Contact: ${booking.clientContact || 'N/A'}`, 20, 100);
+            doc.text(`Email: ${booking.clientEmail || 'N/A'}`, 20, 115);
+            doc.text(`Trip Dates: ${formatDate(booking.tripStartDate)} - ${formatDate(booking.tripEndDate)}`, 20, 130);
+            doc.text(`Plan: ${booking.planType || 'N/A'}`, 20, 145);
+            doc.text(`Total PAX: ${booking.totalPax || 0}`, 20, 160);
+            doc.text(`Total Cost: ₹${(booking.totalCost || 0).toLocaleString('en-IN')}`, 20, 175);
+            doc.text(`Balance: ₹${(booking.balanceAmount || 0).toLocaleString('en-IN')}`, 20, 190);
+
+            // Save PDF
+            doc.save(`${(booking.clientName || 'Booking').replace(/\s+/g, '_')}_${booking.pnr}.pdf`);
+            
+            showToast('PDF generated successfully!');
+        }
+
+        // Generate WhatsApp messages
+        function generateWhatsAppMessages() {
+            const booking = getFormData();
+            
+            const templates = [
+                {
+                    title: "Booking Confirmation",
+                    message: `Dear ${booking.clientName || 'Valued Customer'},\n\nYour booking with Snowmist Holidays is confirmed!\n\n📋 PNR: ${booking.pnr}\n📅 Trip Dates: ${formatDate(booking.tripStartDate)} - ${formatDate(booking.tripEndDate)}\n🗺️ Plan: ${booking.planType || 'N/A'}\n👥 Total PAX: ${booking.totalPax || 0}\n💰 Total Cost: ₹${(booking.totalCost || 0).toLocaleString('en-IN')}\n\nThank you for choosing Snowmist Holidays!\n\nContact: 7888148814, 7888158815`
+                },
+                {
+                    title: "Payment Reminder",
+                    message: `Dear ${booking.clientName || 'Valued Customer'},\n\nThis is a gentle reminder for your pending payment.\n\n📋 PNR: ${booking.pnr}\n💰 Total Cost: ₹${(booking.totalCost || 0).toLocaleString('en-IN')}\n💳 Paid: ₹${((booking.firstAdvance || 0) + (booking.secondAdvance || 0)).toLocaleString('en-IN')}\n⏳ Pending Balance: ₹${(booking.balanceAmount || 0).toLocaleString('en-IN')}\n\nPlease clear the balance before your trip date.\n\nSnowmist Holidays`
+                },
+                {
+                    title: "Pre-Trip Instructions",
+                    message: `Dear ${booking.clientName || 'Valued Customer'},\n\nYour trip is approaching! Here are some important instructions:\n\n📋 PNR: ${booking.pnr}\n📅 Trip Dates: ${formatDate(booking.tripStartDate)} - ${formatDate(booking.tripEndDate)}\n🗺️ Plan: ${booking.planType || 'N/A'}\n👥 Total PAX: ${booking.totalPax || 0}\n\n✅ Things to carry:\n• Warm clothes\n• ID proof\n• Medicines (if any)\n• Camera for memories!\n\nContact us for any queries.\n\nSnowmist Holidays`
+                }
+            ];
+
+            const container = document.getElementById('whatsappTemplates');
+            container.innerHTML = templates.map(template => `
+                <div class="template-item">
+                    <div class="template-title">${template.title}</div>
+                    <div class="template-message">${template.message}</div>
+                    <div class="template-actions">
+                        <button class="btn btn-success btn-sm" onclick="copyToClipboard('${template.message.replace(/'/g, "\\'")}')">
+                            <i class="fas fa-copy"></i>
+                            Copy Message
+                        </button>
+                        ${booking.clientContact ? `
+                        <button class="btn btn-primary btn-sm" onclick="sendWhatsAppMessage('${booking.clientContact}', '${template.message.replace(/'/g, "\\'").replace(/\n/g, '\\n')}')">
+                            <i class="fab fa-whatsapp"></i>
+                            Send WhatsApp
+                        </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('whatsappModal').classList.add('active');
+        }
+
+        // Get form data
+        function getFormData() {
+            const formData = new FormData(document.getElementById('bookingForm'));
+            const booking = {};
+            
+            for (let [key, value] of formData.entries()) {
+                booking[key] = value;
+            }
+            
+            // Add hotels data
+            booking.hotels = [];
+            for (let i = 1; i <= hotelCounter; i++) {
+                const hotelName = document.querySelector(`[name="hotelName${i}"]`)?.value;
+                if (hotelName) {
+                    booking.hotels.push({
+                        name: hotelName,
+                        city: document.querySelector(`[name="hotelCity${i}"]`)?.value || '',
+                        checkinDate: document.querySelector(`[name="checkinDate${i}"]`)?.value || '',
+                        checkoutDate: document.querySelector(`[name="checkoutDate${i}"]`)?.value || '',
+                        foodPlan: document.querySelector(`[name="foodPlan${i}"]`)?.value || '',
+                        remarks: document.querySelector(`[name="hotelRemarks${i}"]`)?.value || ''
+                    });
+                }
+            }
+            
+            return booking;
+        }
+
+        // Update analytics
+        function updateAnalytics() {
+            const totalBookings = bookingsData.length;
+            const totalPax = bookingsData.reduce((sum, b) => sum + (parseInt(b.totalPax) || 0), 0);
+            const totalRevenue = bookingsData.reduce((sum, b) => sum + (parseFloat(b.totalCost) || 0), 0);
+            const totalBalance = bookingsData.reduce((sum, b) => sum + (parseFloat(b.balanceAmount) || 0), 0);
+            
+            document.getElementById('totalBookingsCount').textContent = totalBookings;
+            document.getElementById('totalPaxCount').textContent = totalPax;
+            document.getElementById('totalRevenueCount').textContent = '₹' + totalRevenue.toLocaleString('en-IN');
+            document.getElementById('totalBalanceCount').textContent = '₹' + totalBalance.toLocaleString('en-IN');
+            
+            // Update chart if analytics tab is active
+            if (document.getElementById('analytics').classList.contains('active')) {
+                updateAnalyticsChart();
+            }
+        }
+
+        // Update analytics chart
+        function updateAnalyticsChart() {
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            
+            if (analyticsChart) {
+                analyticsChart.destroy();
+            }
+            
+            // Prepare data
+            const planData = {};
+            bookingsData.forEach(booking => {
+                const plan = booking.planType || 'Unknown';
+                planData[plan] = (planData[plan] || 0) + 1;
+            });
+            
+            const labels = Object.keys(planData);
+            const data = Object.values(planData);
+            
+            analyticsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Bookings by Plan',
+                        data: data,
+                        backgroundColor: '#2563eb',
+                        borderColor: '#1e40af',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        // Download sample CSV
+        function downloadSampleCSV() {
+            const sampleData = [
+                ['PNR', 'Client Name', 'Client Contact', 'Alternate Contact', 'Email', 'Total PAX', 'Trip Start Date', 'Trip End Date', 'Plan Type', 'Pickup Date', 'Pickup Time', 'Pickup Location', 'Drop Date', 'Drop Time', 'Drop Location', 'Per Person Cost', 'First Advance', 'First Advance Mode', 'Second Advance', 'Second Advance Mode', 'Balance Amount', 'Balance Mode', 'Sold By', 'Must Remarks'],
+                ['SMNOV25-001', 'John Doe', '9876543210', '9123456789', 'john@example.com', '4', '2025-12-01', '2025-12-07', 'Plan A', '2025-12-01', '08:00', 'Hyderabad Airport', '2025-12-07', '18:00', 'Hyderabad Airport', '15000', '20000', 'Bank Transfer', '10000', 'UPI', '30000', 'Cash', 'PS', 'Vegetarian meals required'],
+                ['SMNOV25-002', 'Jane Smith', '9123456789', '', 'jane@example.com', '2', '2025-12-15', '2025-12-21', 'Plan C', '2025-12-15', '09:00', 'Delhi Railway Station', '2025-12-21', '20:00', 'Delhi Railway Station', '18000', '15000', 'Credit Card', '5000', 'Debit Card', '16000', 'Bank Transfer', 'JD', 'Couple room required']
+            ];
+            
+            const csvContent = sampleData.map(row => row.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'snowmist_sample_bookings.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Sample CSV downloaded successfully!');
+        }
+
+        // Export all data
+        function exportAllData() {
+            if (bookingsData.length === 0) {
+                showToast('No data to export', 'error');
+                return;
+            }
+            
+            const csvContent = [
+                ['PNR', 'Client Name', 'Client Contact', 'Alternate Contact', 'Email', 'Total PAX', 'Trip Start Date', 'Trip End Date', 'Plan Type', 'Pickup Date', 'Pickup Time', 'Pickup Location', 'Drop Date', 'Drop Time', 'Drop Location', 'Per Person Cost', 'Total Cost', 'First Advance', 'First Advance Mode', 'Second Advance', 'Second Advance Mode', 'Balance Amount', 'Balance Mode', 'Sold By', 'Must Remarks'],
+                ...bookingsData.map(booking => [
+                    booking.pnr,
+                    booking.clientName || '',
+                    booking.clientContact || '',
+                    booking.alternateContact || '',
+                    booking.clientEmail || '',
+                    booking.totalPax || '',
+                    booking.tripStartDate || '',
+                    booking.tripEndDate || '',
+                    booking.planType || '',
+                    booking.pickupDate || '',
+                    booking.pickupTime || '',
+                    booking.pickupLocation || '',
+                    booking.dropDate || '',
+                    booking.dropTime || '',
+                    booking.dropLocation || '',
+                    booking.perPersonCost || '',
+                    booking.totalCost || '',
+                    booking.firstAdvance || '',
+                    booking.firstAdvanceMode || '',
+                    booking.secondAdvance || '',
+                    booking.secondAdvanceMode || '',
+                    booking.balanceAmount || '',
+                    booking.balanceMode || '',
+                    booking.soldBy || '',
+                    booking.mustRemarks || ''
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `snowmist_bookings_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Data exported successfully!');
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.querySelector('.toast-message').textContent = message;
+            
+            if (type === 'error') {
+                toast.style.borderLeftColor = '#dc2626';
+                toast.querySelector('.toast-icon').className = 'fas fa-exclamation-circle toast-icon';
+                toast.querySelector('.toast-icon').style.color = '#dc2626';
+            } else {
+                toast.style.borderLeftColor = '#059669';
+                toast.querySelector('.toast-icon').className = 'fas fa-check-circle toast-icon';
+                toast.querySelector('.toast-icon').style.color = '#059669';
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

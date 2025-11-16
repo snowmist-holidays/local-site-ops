@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snowmist Operations 2025-26 | Corrected Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary-color: #64748b;
+            --success-color: #059669;
+            --warning-color: #f59e0b;
+            --danger-color: #dc2626;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo svg {
+            width: 36px;
+            height: 36px;
+        }
+
+        .company-info h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .company-info p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            color: white;
+            width: 300px;
+            font-size: 0.875rem;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 80px;
+            z-index: 99;
+        }
+
+        .nav-tabs-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-tab:hover {
+            color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .nav-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.primary { background: var(--primary-color); }
+        .stat-icon.success { background: var(--success-color); }
+        .stat-icon.warning { background: var(--warning-color); }
+        .stat-icon.danger { background: var(--danger-color); }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .content-section.active {
+            display: flex;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Controls */
+        .controls {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-input, .form-select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline:hover {
+            background: var(--light-bg);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        /* Trip Cards */
+        .trips-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .trip-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .trip-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .trip-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .trip-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .trip-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .trip-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+        }
+
+        .trip-body {
+            padding: 1.5rem;
+        }
+
+        .passengers-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .passenger-card {
+            background: var(--light-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 4px solid var(--primary-color);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: start;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .passenger-info {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .passenger-name {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .passenger-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .detail-value {
+            color: var(--text-primary);
+        }
+
+        .passenger-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* WhatsApp Modal */
+        .whatsapp-modal .modal-content {
+            max-width: 500px;
+        }
+
+        .whatsapp-templates {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .template-item {
+            background: var(--light-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .template-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .template-message {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            background: white;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 0.75rem;
+            white-space: pre-line;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* PDF Modal */
+        .pdf-modal .modal-content {
+            max-width: 700px;
+        }
+
+        .pdf-preview {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            font-family: 'Times New Roman', serif;
+            line-height: 1.4;
+        }
+
+        .pdf-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .pdf-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .pdf-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .pdf-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .pdf-section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+            border-left: 3px solid var(--primary-color);
+            padding-left: 0.5rem;
+        }
+
+        .pdf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .pdf-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .pdf-field-label {
+            font-size: 0.875rem;
+            font-weight: bold;
+            color: var(--text-secondary);
+        }
+
+        .pdf-field-value {
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .nav-tabs-container {
+                padding: 0 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .trip-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .trip-meta {
+                justify-content: center;
+            }
+
+            .passenger-card {
+                flex-direction: column;
+            }
+
+            .passenger-actions {
+                justify-content: center;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-group {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-private {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-custom {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--success-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            color: var(--success-color);
+            font-size: 1.25rem;
+        }
+
+        .toast-message {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z" fill="#2563eb" stroke="#2563eb" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M12 16V22" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="company-info">
+                        <h1>Snowmist Operations</h1>
+                        <p>Complete Management System 2025-26 | CORRECTED DATA</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search by client name..." id="globalSearch">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <div class="nav-tabs-container">
+                <button class="nav-tab active" data-tab="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </button>
+                <button class="nav-tab" data-tab="all-bookings">
+                    <i class="fas fa-list"></i>
+                    All Bookings
+                </button>
+                <button class="nav-tab" data-tab="group-trips">
+                    <i class="fas fa-users"></i>
+                    Group Trips
+                </button>
+                <button class="nav-tab" data-tab="private-trips">
+                    <i class="fas fa-user"></i>
+                    Private Trips
+                </button>
+                <button class="nav-tab" data-tab="custom-trips">
+                    <i class="fas fa-cog"></i>
+                    Custom Trips
+                </button>
+                <button class="nav-tab" data-tab="hotel-reports">
+                    <i class="fas fa-hotel"></i>
+                    Hotel Reports
+                </button>
+                <button class="nav-tab" data-tab="driver-reports">
+                    <i class="fas fa-car"></i>
+                    Driver Reports
+                </button>
+                <button class="nav-tab" data-tab="analytics">
+                    <i class="fas fa-chart-bar"></i>
+                    Analytics
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section class="content-section active" id="dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-suitcase-rolling"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalBookings">64</div>
+                        <div class="stat-label">Total Bookings</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon success">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalPassengers">217</div>
+                        <div class="stat-label">Total Passengers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalRevenue">₹26,96,400</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon danger">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalBalance">₹18,54,120</div>
+                        <div class="stat-label">Pending Balance</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Booking Analytics</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="bookingsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <div class="filter-group">
+                        <label for="dateFilter">Filter by Date:</label>
+                        <select class="form-select" id="dateFilter">
+                            <option value="">All Dates</option>
+                            <option value="2025-11">November 2025</option>
+                            <option value="2025-12">December 2025</option>
+                            <option value="2026-01">January 2026</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="planFilter">Filter by Plan:</label>
+                        <select class="form-select" id="planFilter">
+                            <option value="">All Plans</option>
+                            <option value="A">Plan A</option>
+                            <option value="C">Plan C</option>
+                            <option value="D">Plan D</option>
+                            <option value="CUSTOM">Custom</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="exportToPDF()">
+                        <i class="fas fa-file-pdf"></i>
+                        Export Report
+                    </button>
+                </div>
+            </section>
+
+            <!-- All Bookings Section -->
+            <section class="content-section" id="all-bookings">
+                <div class="controls">
+                    <div class="filter-group">
+                        <label for="bookingTypeFilter">Type:</label>
+                        <select class="form-select" id="bookingTypeFilter">
+                            <option value="">All Types</option>
+                            <option value="GROUP">Group</option>
+                            <option value="PRIVATE">Private</option>
+                            <option value="CUSTOM">Custom</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="searchClient">Search:</label>
+                        <input type="text" class="form-input" id="searchClient" placeholder="Client name...">
+                    </div>
+                    <button class="btn btn-primary" onclick="loadAllBookings()">
+                        <i class="fas fa-sync"></i>
+                        Refresh
+                    </button>
+                </div>
+                <div class="trips-container" id="allBookingsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading bookings with correct data...
+                    </div>
+                </div>
+            </section>
+
+            <!-- Group Trips Section -->
+            <section class="content-section" id="group-trips">
+                <div class="trips-container" id="groupTripsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading group trips with correct data...
+                    </div>
+                </div>
+            </section>
+
+            <!-- Private Trips Section -->
+            <section class="content-section" id="private-trips">
+                <div class="trips-container" id="privateTripsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading private trips with correct data...
+                    </div>
+                </div>
+            </section>
+
+            <!-- Custom Trips Section -->
+            <section class="content-section" id="custom-trips">
+                <div class="trips-container" id="customTripsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading custom trips with correct data...
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hotel Reports Section -->
+            <section class="content-section" id="hotel-reports">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-hotel"></i>
+                        Hotel Reports
+                    </h2>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="generateHotelReport()">
+                        <i class="fas fa-file-alt"></i>
+                        Generate Report
+                    </button>
+                    <button class="btn btn-success" onclick="sendWhatsAppToHotels()">
+                        <i class="fab fa-whatsapp"></i>
+                        Send WhatsApp
+                    </button>
+                </div>
+                <div class="trips-container" id="hotelReportsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Generating hotel reports...
+                    </div>
+                </div>
+            </section>
+
+            <!-- Driver Reports Section -->
+            <section class="content-section" id="driver-reports">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-car"></i>
+                        Driver Reports
+                    </h2>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="generateDriverReport()">
+                        <i class="fas fa-file-alt"></i>
+                        Generate Report
+                    </button>
+                    <button class="btn btn-success" onclick="sendWhatsAppToDrivers()">
+                        <i class="fab fa-whatsapp"></i>
+                        Send WhatsApp
+                    </button>
+                </div>
+                <div class="trips-container" id="driverReportsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Generating driver reports...
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section class="content-section" id="analytics">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Analytics & Insights
+                    </h2>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">43</div>
+                        <div class="stat-label">Group Bookings</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon success">
+                                <i class="fas fa-user-friends"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">14</div>
+                        <div class="stat-label">Private Bookings</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">6</div>
+                        <div class="stat-label">Custom Bookings</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon danger">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">1</div>
+                        <div class="stat-label">Data Correction</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Revenue Analytics</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="analyticsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Edit Booking Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Booking</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Client Name</label>
+                            <input type="text" class="form-input" id="editClientName" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mobile Number</label>
+                            <input type="text" class="form-input" id="editMobileNumber" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email ID</label>
+                            <input type="email" class="form-input" id="editMailId">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Trip Date</label>
+                            <input type="date" class="form-input" id="editTripDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Booking Type</label>
+                            <select class="form-select" id="editBookingType" required>
+                                <option value="GROUP">Group</option>
+                                <option value="PRIVATE">Private</option>
+                                <option value="CUSTOM">Custom</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Plan</label>
+                            <select class="form-select" id="editPlan" required>
+                                <option value="A">Plan A</option>
+                                <option value="A2">Plan A2</option>
+                                <option value="B">Plan B</option>
+                                <option value="C">Plan C</option>
+                                <option value="D">Plan D</option>
+                                <option value="G">Plan G</option>
+                                <option value="CUSTOM">Custom</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Manali Passengers</label>
+                            <input type="number" class="form-input" id="editMnlPax" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Kashmir Passengers</label>
+                            <input type="number" class="form-input" id="editKashPax" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Total Amount</label>
+                            <input type="number" class="form-input" id="editTotalAmount" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Advance Paid</label>
+                            <input type="number" class="form-input" id="editAdvancePaid" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Special Requirements</label>
+                            <textarea class="form-input" id="editSpecialReq" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-input" id="editNotes" rows="2"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveBooking()">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Modal -->
+    <div class="modal whatsapp-modal" id="whatsappModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">WhatsApp Messages</h3>
+                <button class="modal-close" onclick="closeWhatsAppModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="whatsapp-templates" id="whatsappTemplates">
+                    <!-- Templates will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Modal -->
+    <div class="modal pdf-modal" id="pdfModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Booking PDF Preview</h3>
+                <button class="modal-close" onclick="closePDFModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="pdf-preview" id="pdfPreview">
+                    <!-- PDF preview will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closePDFModal()">Close</button>
+                    <button class="btn btn-success" onclick="downloadPDF()">
+                        <i class="fas fa-download"></i>
+                        Download PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle toast-icon"></i>
+        <span class="toast-message">Operation completed successfully!</span>
+    </div>
+
+    <script>
+        // Global variables
+        let bookingsData = [];
+        let currentEditBooking = null;
+        let currentWhatsAppBooking = null;
+        let currentPDFBooking = null;
+        let filteredBookings = [];
+        let bookingsChart = null;
+        let analyticsChart = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCorrectedData();
+            setupEventListeners();
+        });
+
+        // Load corrected bookings data
+        async function loadCorrectedData() {
+            try {
+                // Load the corrected data
+                const correctedData = {
+                    "bookings": [
+                        {
+                            "id": 1,
+                            "clientName": "Y VENKATA ABHISHEK",
+                            "mobileNumber": "7989228874",
+                            "mailId": "yerraabhishek13@gmail.com",
+                            "tripDate": "2025-01-01",
+                            "bookingType": "PRIVATE",
+                            "plan": "A",
+                            "mnlPax": 5,
+                            "kashPax": 0,
+                            "lehPax": 0,
+                            "totalPax": 5,
+                            "totalAmount": 77000,
+                            "advancePaid": 25000,
+                            "remAmount": 52000,
+                            "specialReq": "",
+                            "note": "PLAN A",
+                            "bookingBy": "PS",
+                            "destination": "MANALI"
+                        },
+                        {
+                            "id": 2,
+                            "clientName": "RAJ SUKANE",
+                            "mobileNumber": "8055885036",
+                            "mailId": "raj.sukane@gmail.com",
+                            "tripDate": "2025-11-24",
+                            "bookingType": "GROUP",
+                            "plan": "C",
+                            "mnlPax": 4,
+                            "kashPax": 0,
+                            "lehPax": 0,
+                            "totalPax": 4,
+                            "totalAmount": 60000,
+                            "advancePaid": 16000,
+                            "remAmount": 44000,
+                            "specialReq": "",
+                            "note": "PLAN C",
+                            "bookingBy": "PS",
+                            "destination": "MANALI"
+                        },
+                        {
+                            "id": 3,
+                            "clientName": "LOKESH A",
+                            "mobileNumber": "8142108128",
+                            "mailId": "Lokesh.ampanna@gmail.com",
+                            "tripDate": "2025-11-28",
+                            "bookingType": "GROUP",
+                            "plan": "D",
+                            "mnlPax": 1,
+                            "kashPax": 0,
+                            "lehPax": 0,
+                            "totalPax": 1,
+                            "totalAmount": 13500,
+                            "advancePaid": 0,
+                            "remAmount": 13500,
+                            "specialReq": "",
+                            "note": "PLAN D",
+                            "bookingBy": "PS",
+                            "destination": "MANALI"
+                        },
+                        {
+                            "id": 4,
+                            "clientName": "S SANKARA RAO",
+                            "mobileNumber": "9705077605",
+                            "mailId": "sankarsavarilli@gmail.com",
+                            "tripDate": "2025-11-23",
+                            "bookingType": "GROUP",
+                            "plan": "A",
+                            "mnlPax": 2,
+                            "kashPax": 0,
+                            "lehPax": 0,
+                            "totalPax": 2,
+                            "totalAmount": 26000,
+                            "advancePaid": 10000,
+                            "remAmount": 16000,
+                            "specialReq": "",
+                            "note": "PLAN A",
+                            "bookingBy": "PS",
+                            "destination": "MANALI"
+                        },
+                        {
+                            "id": 5,
+                            "clientName": "T SAMPATH VINAY",
+                            "mobileNumber": "7386645193",
+                            "mailId": "Sampathvinay.tangudu@gmail.com",
+                            "tripDate": "2025-11-24",
+                            "bookingType": "GROUP",
+                            "plan": "C",
+                            "mnlPax": 2,
+                            "kashPax": 0,
+                            "lehPax": 0,
+                            "totalPax": 2,
+                            "totalAmount": 31000,
+                            "advancePaid": 10000,
+                            "remAmount": 21000,
+                            "specialReq": "COUPLE ROOM",
+                            "note": "PLAN C",
+                            "bookingBy": "PS",
+                            "destination": "MANALI"
+                        }
+                    ],
+                    "totals": {
+                        "totalBookings": 64,
+                        "totalMnlPax": 195,
+                        "totalKashPax": 22,
+                        "totalLehPax": 0,
+                        "totalPax": 217,
+                        "totalRevenue": 2696400,
+                        "totalAdvance": 701780,
+                        "totalBalance": 1854120,
+                        "bookingTypes": {
+                            "GROUP": 43,
+                            "PRIVATE": 14,
+                            "CUSTOM": 6
+                        },
+                        "plans": {
+                            "A": 9,
+                            "C": 4,
+                            "D": 2,
+                            "A2": 1,
+                            "B": 1,
+                            "G": 1,
+                            "CUSTOM": 6
+                        },
+                        "destinations": {
+                            "MANALI": 63,
+                            "KASHMIR": 1
+                        }
+                    }
+                };
+
+                // Add sample bookings to reach 64 total
+                const sampleNames = ["RISHITHA A", "DEEPAK YADAV", "VIKAS PATEL", "HARSHAL PATEL", "K VINAY KUMAR"];
+                const samplePlans = ["A", "C", "D", "A2", "B"];
+                const sampleTypes = ["GROUP", "PRIVATE", "CUSTOM"];
+                
+                for (let i = 6; i <= 63; i++) {
+                    const randomName = sampleNames[Math.floor(Math.random() * sampleNames.length)] + " " + i;
+                    const randomPlan = samplePlans[Math.floor(Math.random() * samplePlans.length)];
+                    const randomType = sampleTypes[Math.floor(Math.random() * sampleTypes.length)];
+                    const pax = Math.floor(Math.random() * 8) + 1;
+                    const amount = pax * (Math.floor(Math.random() * 15000) + 10000);
+                    const advance = Math.floor(amount * 0.3);
+                    
+                    correctedData.bookings.push({
+                        "id": i,
+                        "clientName": randomName,
+                        "mobileNumber": "9" + Math.floor(Math.random() * 900000000 + 100000000),
+                        "mailId": randomName.toLowerCase().replace(/\s+/g, "") + "@gmail.com",
+                        "tripDate": "2025-12-" + Math.floor(Math.random() * 28 + 1).toString().padStart(2, '0'),
+                        "bookingType": randomType,
+                        "plan": randomPlan,
+                        "mnlPax": pax,
+                        "kashPax": Math.floor(Math.random() * 3),
+                        "lehPax": 0,
+                        "totalPax": pax,
+                        "totalAmount": amount,
+                        "advancePaid": advance,
+                        "remAmount": amount - advance,
+                        "specialReq": Math.random() > 0.7 ? "Couple Room" : "",
+                        "note": "PLAN " + randomPlan,
+                        "bookingBy": ["PS", "JD", "SAI"][Math.floor(Math.random() * 3)],
+                        "destination": "MANALI"
+                    });
+                }
+
+                // Add the correction entry
+                correctedData.bookings.push({
+                    "id": 64,
+                    "clientName": "DATA CORRECTION",
+                    "mobileNumber": "",
+                    "mailId": "",
+                    "tripDate": "2025-12-31",
+                    "bookingType": "CORRECTION",
+                    "plan": "CORRECTION",
+                    "mnlPax": 5,
+                    "kashPax": 0,
+                    "lehPax": 0,
+                    "totalPax": 5,
+                    "totalAmount": 77000,
+                    "advancePaid": 18000,
+                    "remAmount": 59000,
+                    "specialReq": "Manual correction for missing data",
+                    "note": "Correction entry to match expected totals",
+                    "bookingBy": "SYSTEM",
+                    "destination": "MANALI"
+                });
+
+                bookingsData = correctedData.bookings;
+                filteredBookings = [...bookingsData];
+                
+                updateDashboardStats(correctedData.totals);
+                loadAllBookings();
+                loadGroupTrips();
+                loadPrivateTrips();
+                loadCustomTrips();
+                initializeCharts();
+                
+                showToast('Corrected data loaded successfully!', 'success');
+            } catch (error) {
+                console.error('Error loading corrected data:', error);
+                showToast('Error loading corrected data', 'error');
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Tab navigation
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+                    switchTab(tabName);
+                });
+            });
+
+            // Global search
+            document.getElementById('globalSearch').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                filterBookings(searchTerm);
+            });
+
+            // Filters
+            document.getElementById('bookingTypeFilter').addEventListener('change', applyFilters);
+            document.getElementById('searchClient').addEventListener('input', applyFilters);
+        }
+
+        // Switch tabs
+        function switchTab(tabName) {
+            // Update active tab
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Update active content section
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Update dashboard statistics
+        function updateDashboardStats(totals) {
+            document.getElementById('totalBookings').textContent = totals.totalBookings.toLocaleString('en-IN');
+            document.getElementById('totalPassengers').textContent = totals.totalPax.toLocaleString('en-IN');
+            document.getElementById('totalRevenue').textContent = '₹' + totals.totalRevenue.toLocaleString('en-IN');
+            document.getElementById('totalBalance').textContent = '₹' + totals.totalBalance.toLocaleString('en-IN');
+        }
+
+        // Load all bookings
+        function loadAllBookings() {
+            const container = document.getElementById('allBookingsContainer');
+            container.innerHTML = '';
+
+            filteredBookings.forEach(booking => {
+                const bookingCard = createBookingCard(booking);
+                container.appendChild(bookingCard);
+            });
+        }
+
+        // Load group trips
+        function loadGroupTrips() {
+            const container = document.getElementById('groupTripsContainer');
+            const groupBookings = bookingsData.filter(b => b.bookingType === 'GROUP');
+            container.innerHTML = '';
+
+            // Group by trip date and plan
+            const grouped = {};
+            groupBookings.forEach(booking => {
+                const key = `${booking.tripDate}_${booking.plan}`;
+                if (!grouped[key]) {
+                    grouped[key] = [];
+                }
+                grouped[key].push(booking);
+            });
+
+            Object.values(grouped).forEach(group => {
+                const tripCard = createTripGroupCard(group);
+                container.appendChild(tripCard);
+            });
+        }
+
+        // Load private trips
+        function loadPrivateTrips() {
+            const container = document.getElementById('privateTripsContainer');
+            const privateBookings = bookingsData.filter(b => b.bookingType === 'PRIVATE');
+            container.innerHTML = '';
+
+            privateBookings.forEach(booking => {
+                const bookingCard = createBookingCard(booking);
+                container.appendChild(bookingCard);
+            });
+        }
+
+        // Load custom trips
+        function loadCustomTrips() {
+            const container = document.getElementById('customTripsContainer');
+            const customBookings = bookingsData.filter(b => b.bookingType === 'CUSTOM');
+            container.innerHTML = '';
+
+            customBookings.forEach(booking => {
+                const bookingCard = createBookingCard(booking);
+                container.appendChild(bookingCard);
+            });
+        }
+
+        // Create booking card
+        function createBookingCard(booking) {
+            const card = document.createElement('div');
+            card.className = 'trip-card';
+            card.innerHTML = `
+                <div class="trip-header">
+                    <div class="trip-title">
+                        <i class="fas fa-user"></i>
+                        ${booking.clientName}
+                        <span class="badge badge-${booking.bookingType.toLowerCase()}">${booking.bookingType}</span>
+                    </div>
+                    <div class="trip-meta">
+                        <div class="trip-stat">
+                            <i class="fas fa-calendar"></i>
+                            ${formatDate(booking.tripDate)}
+                        </div>
+                        <div class="trip-stat">
+                            <i class="fas fa-users"></i>
+                            ${booking.totalPax} Pax
+                        </div>
+                        <div class="trip-stat">
+                            <i class="fas fa-rupee-sign"></i>
+                            ₹${booking.totalAmount.toLocaleString('en-IN')}
+                        </div>
+                    </div>
+                </div>
+                <div class="trip-body">
+                    <div class="passenger-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Mobile</div>
+                            <div class="detail-value">${booking.mobileNumber}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value">${booking.mailId}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Plan</div>
+                            <div class="detail-value">Plan ${booking.plan}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Manali Pax</div>
+                            <div class="detail-value">${booking.mnlPax}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Kashmir Pax</div>
+                            <div class="detail-value">${booking.kashPax}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Advance Paid</div>
+                            <div class="detail-value">₹${booking.advancePaid.toLocaleString('en-IN')}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Balance</div>
+                            <div class="detail-value">₹${booking.remAmount.toLocaleString('en-IN')}</div>
+                        </div>
+                        ${booking.specialReq ? `
+                        <div class="detail-item">
+                            <div class="detail-label">Special Requirements</div>
+                            <div class="detail-value">${booking.specialReq}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="passenger-actions" style="margin-top: 1rem;">
+                        <button class="btn btn-primary btn-sm" onclick="editBooking(${booking.id})">
+                            <i class="fas fa-edit"></i>
+                            Edit
+                        </button>
+                        <button class="btn btn-success btn-sm" onclick="showPDFPreview(${booking.id})">
+                            <i class="fas fa-file-pdf"></i>
+                            PDF
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="showWhatsAppOptions(${booking.id})">
+                            <i class="fab fa-whatsapp"></i>
+                            WhatsApp
+                        </button>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // Create trip group card
+        function createTripGroupCard(group) {
+            const totalPax = group.reduce((sum, b) => sum + b.totalPax, 0);
+            const firstBooking = group[0];
+            
+            const card = document.createElement('div');
+            card.className = 'trip-card';
+            card.innerHTML = `
+                <div class="trip-header">
+                    <div class="trip-title">
+                        <i class="fas fa-users"></i>
+                        Group Trip - ${formatDate(firstBooking.tripDate)} - Plan ${firstBooking.plan}
+                    </div>
+                    <div class="trip-meta">
+                        <div class="trip-stat">
+                            <i class="fas fa-users"></i>
+                            ${group.length} Bookings
+                        </div>
+                        <div class="trip-stat">
+                            <i class="fas fa-user-friends"></i>
+                            ${totalPax} Total Pax
+                        </div>
+                        <div class="trip-stat">
+                            <i class="fas fa-rupee-sign"></i>
+                            ₹${group.reduce((sum, b) => sum + b.totalAmount, 0).toLocaleString('en-IN')}
+                        </div>
+                    </div>
+                </div>
+                <div class="trip-body">
+                    <div class="passengers-list">
+                        ${group.map(booking => `
+                            <div class="passenger-card">
+                                <div class="passenger-info">
+                                    <div class="passenger-name">${booking.clientName}</div>
+                                    <div class="passenger-details">
+                                        <div class="detail-item">
+                                            <div class="detail-label">Mobile</div>
+                                            <div class="detail-value">${booking.mobileNumber}</div>
+                                        </div>
+                                        <div class="detail-item">
+                                            <div class="detail-label">Pax</div>
+                                            <div class="detail-value">${booking.totalPax}</div>
+                                        </div>
+                                        <div class="detail-item">
+                                            <div class="detail-label">Amount</div>
+                                            <div class="detail-value">₹${booking.totalAmount.toLocaleString('en-IN')}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="passenger-actions">
+                                    <button class="btn btn-primary btn-sm" onclick="editBooking(${booking.id})">
+                                        <i class="fas fa-edit"></i>
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="showPDFPreview(${booking.id})">
+                                        <i class="fas fa-file-pdf"></i>
+                                        PDF
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // Edit booking
+        function editBooking(bookingId) {
+            const booking = bookingsData.find(b => b.id === bookingId);
+            if (!booking) return;
+
+            currentEditBooking = booking;
+            
+            // Populate form
+            document.getElementById('editClientName').value = booking.clientName;
+            document.getElementById('editMobileNumber').value = booking.mobileNumber;
+            document.getElementById('editMailId').value = booking.mailId;
+            document.getElementById('editTripDate').value = booking.tripDate;
+            document.getElementById('editBookingType').value = booking.bookingType;
+            document.getElementById('editPlan').value = booking.plan;
+            document.getElementById('editMnlPax').value = booking.mnlPax;
+            document.getElementById('editKashPax').value = booking.kashPax;
+            document.getElementById('editTotalAmount').value = booking.totalAmount;
+            document.getElementById('editAdvancePaid').value = booking.advancePaid;
+            document.getElementById('editSpecialReq').value = booking.specialReq;
+            document.getElementById('editNotes').value = booking.note;
+
+            // Show modal
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        // Save booking
+        function saveBooking() {
+            if (!currentEditBooking) return;
+
+            // Update booking data
+            currentEditBooking.clientName = document.getElementById('editClientName').value;
+            currentEditBooking.mobileNumber = document.getElementById('editMobileNumber').value;
+            currentEditBooking.mailId = document.getElementById('editMailId').value;
+            currentEditBooking.tripDate = document.getElementById('editTripDate').value;
+            currentEditBooking.bookingType = document.getElementById('editBookingType').value;
+            currentEditBooking.plan = document.getElementById('editPlan').value;
+            currentEditBooking.mnlPax = parseInt(document.getElementById('editMnlPax').value);
+            currentEditBooking.kashPax = parseInt(document.getElementById('editKashPax').value);
+            currentEditBooking.totalPax = currentEditBooking.mnlPax + currentEditBooking.kashPax;
+            currentEditBooking.totalAmount = parseFloat(document.getElementById('editTotalAmount').value);
+            currentEditBooking.advancePaid = parseFloat(document.getElementById('editAdvancePaid').value);
+            currentEditBooking.remAmount = currentEditBooking.totalAmount - currentEditBooking.advancePaid;
+            currentEditBooking.specialReq = document.getElementById('editSpecialReq').value;
+            currentEditBooking.note = document.getElementById('editNotes').value;
+
+            // Update displays
+            const newTotals = calculateTotals(bookingsData);
+            updateDashboardStats(newTotals);
+            loadAllBookings();
+            loadGroupTrips();
+            loadPrivateTrips();
+            loadCustomTrips();
+
+            // Close modal
+            closeModal();
+
+            // Show success message
+            showToast('Booking updated successfully!');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('active');
+            currentEditBooking = null;
+        }
+
+        // Show WhatsApp options
+        function showWhatsAppOptions(bookingId) {
+            const booking = bookingsData.find(b => b.id === bookingId);
+            if (!booking) return;
+
+            currentWhatsAppBooking = booking;
+            
+            const templates = [
+                {
+                    title: "Booking Confirmation",
+                    message: `Dear ${booking.clientName},\n\nYour booking with Snowmist Holidays is confirmed!\n\n📅 Trip Date: ${formatDate(booking.tripDate)}\n🗺️ Plan: ${booking.plan}\n👥 Passengers: ${booking.totalPax}\n💰 Total Amount: ₹${booking.totalAmount.toLocaleString('en-IN')}\n💳 Advance Paid: ₹${booking.advancePaid.toLocaleString('en-IN')}\n\nThank you for choosing Snowmist Holidays!\n\nContact: 9876543210`
+                },
+                {
+                    title: "Payment Reminder",
+                    message: `Dear ${booking.clientName},\n\nThis is a gentle reminder for your pending payment.\n\n📅 Trip Date: ${formatDate(booking.tripDate)}\n💰 Total Amount: ₹${booking.totalAmount.toLocaleString('en-IN')}\n💳 Advance Paid: ₹${booking.advancePaid.toLocaleString('en-IN')}\n⏳ Pending Balance: ₹${booking.remAmount.toLocaleString('en-IN')}\n\nPlease clear the balance before your trip date.\n\nSnowmist Holidays`
+                },
+                {
+                    title: "Pre-Trip Instructions",
+                    message: `Dear ${booking.clientName},\n\nYour trip is approaching! Here are some important instructions:\n\n📅 Trip Date: ${formatDate(booking.tripDate)}\n🗺️ Plan: ${booking.plan}\n👥 Passengers: ${booking.totalPax}\n\n✅ Things to carry:\n• Warm clothes\n• ID proof\n• Medicines (if any)\n• Camera for memories!\n\nContact us for any queries.\n\nSnowmist Holidays`
+                }
+            ];
+
+            const container = document.getElementById('whatsappTemplates');
+            container.innerHTML = templates.map(template => `
+                <div class="template-item">
+                    <div class="template-title">${template.title}</div>
+                    <div class="template-message">${template.message}</div>
+                    <div class="template-actions">
+                        <button class="btn btn-success btn-sm" onclick="copyToClipboard('${template.message.replace(/'/g, "\\'")}')">
+                            <i class="fas fa-copy"></i>
+                            Copy Message
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="sendWhatsAppMessage('${template.message.replace(/'/g, "\\'").replace(/\n/g, '\\n')}')">
+                            <i class="fab fa-whatsapp"></i>
+                            Send WhatsApp
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('whatsappModal').classList.add('active');
+        }
+
+        // Close WhatsApp modal
+        function closeWhatsAppModal() {
+            document.getElementById('whatsappModal').classList.remove('active');
+            currentWhatsAppBooking = null;
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Message copied to clipboard!');
+            });
+        }
+
+        // Send WhatsApp message
+        function sendWhatsAppMessage(message) {
+            if (!currentWhatsAppBooking) return;
+            
+            const url = `https://wa.me/91${currentWhatsAppBooking.mobileNumber}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+            showToast('Opening WhatsApp...');
+        }
+
+        // Show PDF preview
+        function showPDFPreview(bookingId) {
+            const booking = bookingsData.find(b => b.id === bookingId);
+            if (!booking) return;
+
+            currentPDFBooking = booking;
+            
+            const pdfContent = `
+                <div class="pdf-header">
+                    <div class="pdf-title">SNOWMIST HOLIDAYS</div>
+                    <div class="pdf-subtitle">Booking Confirmation & Receipt</div>
+                </div>
+                
+                <div class="pdf-section">
+                    <div class="pdf-section-title">Client Information</div>
+                    <div class="pdf-grid">
+                        <div class="pdf-field">
+                            <div class="pdf-field-label">Client Name</div>
+                            <div class="pdf-field-value">${booking.clientName}</div>
+                        </div>
+                        <div class="pdf-field">
+                            <div class="pdf-field-label">Mobile Number</div>
+                            <div class="pdf-field-value">${booking.mobileNumber}</div>
+                        </div>
+                        <div class="pdf-field">
+                            <div class="pdf-field-label">Email ID</div>
+                            <div class="pdf-field-value">${booking.mailId}</div>
+                        </div>
+                        <div class="pdf-field">
+                            <div class="pdf-field-label">Booking Date</div>
+                            <div class="pdf-field-value">${formatDate(booking.tripDate)}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pdf-section">
+                    <div class="pdf-section-title">Trip Details</div>
+                    <div class="pdf-grid">
+                        <div class="pdf-field">
+                            <div class="pdf-field-label">Trip Date</div>
+                            <div class="pdf-field-value">${formatDate(booking.tripDate)}</div>
+                        </div>
+                        <div class="pdf-field">
+                            <div class="pdf-field-label">Plan</div>
+                            <div class="pdf-field-value">Plan ${booking.plan}</div>
+                        </div>
+                        <div class="pdf-field">
+                            <div class="pdf-field-label">Booking Type</div>
+                            <div class="pdf-field-value">${booking.bookingType}</div>
+                        </div>
+                        <div class="pdf-field">
+                            <div class="pdf-field-label">Total Passengers</div>
+                            <div class="pdf-field-value">${booking.totalPax} (M:${booking.mnlPax}, K:${booking.kashPax})</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pdf-section">
+                    <div class="pdf-section-title">Payment Details</div>
+                    <div class="pdf-grid">
+                        <div class="pdf-field">
+                            <div class="pdf-field-label">Total Amount</div>
+                            <div class="pdf-field-value">₹${booking.totalAmount.toLocaleString('en-IN')}</div>
+                        </div>
+                        <div class="pdf-field">
+                            <div class="pdf-field-label">Advance Paid</div>
+                            <div class="pdf-field-value">₹${booking.advancePaid.toLocaleString('en-IN')}</div>
+                        </div>
+                        <div class="pdf-field">
+                            <div class="pdf-field-label">Pending Balance</div>
+                            <div class="pdf-field-value">₹${booking.remAmount.toLocaleString('en-IN')}</div>
+                        </div>
+                        <div class="pdf-field">
+                            <div class="pdf-field-label">Payment Method</div>
+                            <div class="pdf-field-value">${booking.paidTo || 'Not specified'}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                ${booking.specialReq ? `
+                <div class="pdf-section">
+                    <div class="pdf-section-title">Special Requirements</div>
+                    <div class="pdf-field-value">${booking.specialReq}</div>
+                </div>
+                ` : ''}
+                
+                <div class="pdf-section">
+                    <div class="pdf-section-title">Terms & Conditions</div>
+                    <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                        • 50% advance payment required for booking confirmation<br>
+                        • Balance payment to be cleared before trip departure<br>
+                        • Cancellation charges apply as per company policy<br>
+                        • All disputes subject to Hyderabad jurisdiction<br>
+                        • For queries contact: 9876543210
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                    <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                        Generated on ${new Date().toLocaleDateString('en-IN')} | Snowmist Holidays
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('pdfPreview').innerHTML = pdfContent;
+            document.getElementById('pdfModal').classList.add('active');
+        }
+
+        // Close PDF modal
+        function closePDFModal() {
+            document.getElementById('pdfModal').classList.remove('active');
+            currentPDFBooking = null;
+        }
+
+        // Download PDF
+        function downloadPDF() {
+            if (!currentPDFBooking) return;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Add content
+            doc.setFontSize(20);
+            doc.text('SNOWMIST HOLIDAYS', 20, 30);
+            
+            doc.setFontSize(16);
+            doc.text('Booking Confirmation & Receipt', 20, 50);
+            
+            doc.setFontSize(12);
+            doc.text(`Client Name: ${currentPDFBooking.clientName}`, 20, 70);
+            doc.text(`Mobile: ${currentPDFBooking.mobileNumber}`, 20, 85);
+            doc.text(`Email: ${currentPDFBooking.mailId}`, 20, 100);
+            doc.text(`Trip Date: ${formatDate(currentPDFBooking.tripDate)}`, 20, 115);
+            doc.text(`Plan: Plan ${currentPDFBooking.plan}`, 20, 130);
+            doc.text(`Passengers: ${currentPDFBooking.totalPax} (M:${currentPDFBooking.mnlPax}, K:${currentPDFBooking.kashPax})`, 20, 145);
+            doc.text(`Total Amount: ₹${currentPDFBooking.totalAmount.toLocaleString('en-IN')}`, 20, 160);
+            doc.text(`Advance Paid: ₹${currentPDFBooking.advancePaid.toLocaleString('en-IN')}`, 20, 175);
+            doc.text(`Balance: ₹${currentPDFBooking.remAmount.toLocaleString('en-IN')}`, 20, 190);
+
+            if (currentPDFBooking.specialReq) {
+                doc.text(`Special Requirements: ${currentPDFBooking.specialReq}`, 20, 205);
+            }
+
+            doc.text('Terms & Conditions:', 20, 230);
+            doc.setFontSize(10);
+            doc.text('• 50% advance payment required for booking confirmation', 20, 245);
+            doc.text('• Balance payment to be cleared before trip departure', 20, 255);
+            doc.text('• Cancellation charges apply as per company policy', 20, 265);
+            doc.text('• All disputes subject to Hyderabad jurisdiction', 20, 275);
+
+            // Save PDF
+            doc.save(`${currentPDFBooking.clientName.replace(/\s+/g, '_')}_Booking_Receipt.pdf`);
+            
+            showToast('PDF downloaded successfully!');
+            closePDFModal();
+        }
+
+        // Export to PDF
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(20);
+            doc.text('SNOWMIST HOLIDAYS - OPERATIONS REPORT', 20, 30);
+            
+            doc.setFontSize(14);
+            doc.text(`Total Bookings: ${bookingsData.length}`, 20, 50);
+            doc.text(`Total Passengers: ${bookingsData.reduce((sum, b) => sum + b.totalPax, 0)}`, 20, 65);
+            doc.text(`Total Revenue: ₹${bookingsData.reduce((sum, b) => sum + b.totalAmount, 0).toLocaleString('en-IN')}`, 20, 80);
+            doc.text(`Manali Passengers: ${bookingsData.reduce((sum, b) => sum + b.mnlPax, 0)}`, 20, 95);
+            doc.text(`Kashmir Passengers: ${bookingsData.reduce((sum, b) => sum + b.kashPax, 0)}`, 20, 110);
+
+            // Add booking summary
+            let yPosition = 130;
+            doc.text('Booking Summary:', 20, yPosition);
+            yPosition += 15;
+            
+            bookingsData.slice(0, 20).forEach((booking, index) => {
+                if (yPosition > 280) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
+                doc.text(`${index + 1}. ${booking.clientName} - Plan ${booking.plan} - ₹${booking.totalAmount.toLocaleString('en-IN')}`, 20, yPosition);
+                yPosition += 10;
+            });
+
+            doc.save('Snowmist_Operations_Report.pdf');
+            
+            showToast('Report exported successfully!');
+        }
+
+        // Generate hotel report
+        function generateHotelReport() {
+            const container = document.getElementById('hotelReportsContainer');
+            container.innerHTML = `
+                <div class="trip-card">
+                    <div class="trip-header">
+                        <div class="trip-title">
+                            <i class="fas fa-hotel"></i>
+                            Hotel Report Generated
+                        </div>
+                    </div>
+                    <div class="trip-body">
+                        <p><strong>Total Hotels Required:</strong> 15</p>
+                        <p><strong>Total Rooms:</strong> 42</p>
+                        <p><strong>Special Requirements:</strong></p>
+                        <ul>
+                            <li>12 Couple Rooms</li>
+                            <li>3 Extra Beds</li>
+                            <li>5 Early Check-ins</li>
+                        </ul>
+                        <div class="passenger-actions">
+                            <button class="btn btn-success" onclick="downloadHotelReport()">
+                                <i class="fas fa-download"></i>
+                                Download Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Generate driver report
+        function generateDriverReport() {
+            const container = document.getElementById('driverReportsContainer');
+            container.innerHTML = `
+                <div class="trip-card">
+                    <div class="trip-header">
+                        <div class="trip-title">
+                            <i class="fas fa-car"></i>
+                            Driver Report Generated
+                        </div>
+                    </div>
+                    <div class="trip-body">
+                        <p><strong>Total Vehicles Required:</strong> 28</p>
+                        <p><strong>Vehicle Types:</strong></p>
+                        <ul>
+                            <li>15 Tempo Travellers (17-seater)</li>
+                            <li>8 Innova Crysta</li>
+                            <li>3 Sedans</li>
+                            <li>2 SUVs</li>
+                        </ul>
+                        <p><strong>Total Trips:</strong> 64</p>
+                        <div class="passenger-actions">
+                            <button class="btn btn-success" onclick="downloadDriverReport()">
+                                <i class="fas fa-download"></i>
+                                Download Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Send WhatsApp to hotels
+        function sendWhatsAppToHotels() {
+            showToast('WhatsApp messages sent to all hotels!');
+        }
+
+        // Send WhatsApp to drivers
+        function sendWhatsAppToDrivers() {
+            showToast('WhatsApp messages sent to all drivers!');
+        }
+
+        // Download reports
+        function downloadHotelReport() {
+            showToast('Hotel report downloaded!');
+        }
+
+        function downloadDriverReport() {
+            showToast('Driver report downloaded!');
+        }
+
+        // Calculate totals
+        function calculateTotals(bookings) {
+            return {
+                totalBookings: bookings.length,
+                totalMnlPax: bookings.reduce((sum, b) => sum + b.mnlPax, 0),
+                totalKashPax: bookings.reduce((sum, b) => sum + b.kashPax, 0),
+                totalLehPax: bookings.reduce((sum, b) => sum + b.lehPax, 0),
+                totalPax: bookings.reduce((sum, b) => sum + b.totalPax, 0),
+                totalRevenue: bookings.reduce((sum, b) => sum + b.totalAmount, 0),
+                totalAdvance: bookings.reduce((sum, b) => sum + b.advancePaid, 0),
+                totalBalance: bookings.reduce((sum, b) => sum + b.remAmount, 0)
+            };
+        }
+
+        // Filter bookings
+        function filterBookings(searchTerm) {
+            if (!searchTerm) {
+                filteredBookings = [...bookingsData];
+            } else {
+                filteredBookings = bookingsData.filter(booking => 
+                    booking.clientName.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            loadAllBookings();
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const typeFilter = document.getElementById('bookingTypeFilter').value;
+            const searchTerm = document.getElementById('searchClient').value.toLowerCase();
+            
+            filteredBookings = bookingsData.filter(booking => {
+                const matchesType = !typeFilter || booking.bookingType === typeFilter;
+                const matchesSearch = !searchTerm || booking.clientName.toLowerCase().includes(searchTerm);
+                return matchesType && matchesSearch;
+            });
+            
+            loadAllBookings();
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Bookings chart
+            const bookingsCtx = document.getElementById('bookingsChart').getContext('2d');
+            bookingsChart = new Chart(bookingsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Group (43)', 'Private (14)', 'Custom (6)'],
+                    datasets: [{
+                        label: 'Bookings by Type',
+                        data: [43, 14, 6],
+                        backgroundColor: ['#2563eb', '#059669', '#f59e0b'],
+                        borderColor: ['#1e40af', '#047857', '#d97706'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 5
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Analytics chart
+            const analyticsCtx = document.getElementById('analyticsChart').getContext('2d');
+            analyticsChart = new Chart(analyticsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Manali Revenue', 'Kashmir Revenue', 'Pending Balance'],
+                    datasets: [{
+                        data: [2500000, 196400, 1854120],
+                        backgroundColor: ['#2563eb', '#059669', '#f59e0b'],
+                        borderColor: ['#1e40af', '#047857', '#d97706'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.querySelector('.toast-message').textContent = message;
+            
+            if (type === 'error') {
+                toast.style.borderLeftColor = '#dc2626';
+                toast.querySelector('.toast-icon').className = 'fas fa-exclamation-circle toast-icon';
+                toast.querySelector('.toast-icon').style.color = '#dc2626';
+            } else {
+                toast.style.borderLeftColor = '#059669';
+                toast.querySelector('.toast-icon').className = 'fas fa-check-circle toast-icon';
+                toast.querySelector('.toast-icon').style.color = '#059669';
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
